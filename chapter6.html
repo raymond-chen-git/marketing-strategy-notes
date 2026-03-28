@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行銷與商業模式 | 第6章：STP 理論</title>
+    <style>
+        /* V2.0 深色護眼模式 */
+        :root {
+            --primary-color: #61afef;
+            --accent-color: #e5c07b;
+            --bg-color: #121212;
+            --slide-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        .deck-container { width: 100vw; height: 100vh; display: flex; transition: transform 0.5s ease-in-out; }
+        .slide { min-width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px; box-sizing: border-box; background-color: var(--slide-bg); opacity: 0; transition: opacity 0.3s ease; }
+        .slide.active { opacity: 1; }
+        
+        .slide h1 { color: var(--primary-color); font-size: 3em; margin-bottom: 20px; text-align: center; }
+        .slide h2 { color: var(--accent-color); font-size: 2.2em; border-left: 8px solid var(--accent-color); padding-left: 20px; align-self: flex-start; margin-left: 10%; }
+        
+        /* 修正斷行 Bug */
+        .slide p { font-size: 1.4em; line-height: 1.6; max-width: 80%; text-align: justify; color: #cccccc; }
+        .slide li { font-size: 1.4em; line-height: 1.6; text-align: justify; color: #cccccc; margin-bottom: 10px; }
+        .slide ul { align-self: flex-start; margin-left: 15%; max-width: 80%; }
+        
+        .highlight { background-color: rgba(229, 192, 123, 0.2); color: #e5c07b; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+        
+        .nav-btns { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+        .nav-btn { padding: 15px 25px; background-color: #2c313a; color: #abb2bf; border: 1px solid #3e4451; border-radius: 5px; cursor: pointer; font-size: 1.1em; font-weight: bold; transition: 0.3s; }
+        .nav-btn:hover { background-color: var(--primary-color); color: #1e1e1e; }
+        .nav-btn:disabled { background-color: #1e1e1e; color: #5c6370; cursor: not-allowed; border-color: #2c313a; }
+        .page-counter { position: fixed; bottom: 30px; left: 30px; font-size: 1.2em; color: #5c6370; z-index: 100; }
+
+        /* 全域常駐章節導覽列 */
+        .fixed-chapter-nav { position: fixed; top: 20px; left: 30px; display: flex; gap: 15px; z-index: 100; }
+        .fixed-chapter-nav a { padding: 10px 20px; background-color: #2c313a; color: #abb2bf; text-decoration: none; border-radius: 5px; font-size: 1em; border: 1px solid #3e4451; transition: 0.3s; }
+        .fixed-chapter-nav a:hover { background-color: #3e4451; color: #ffffff; }
+
+        /* 測驗區塊深色化 */
+        .quiz-container { text-align: left; align-self: center !important; width: 80%; }
+        .options { list-style-type: none; padding: 0; width: 100%; margin: 20px 0;}
+        .options li { background-color: #282c34; margin-bottom: 15px; padding: 15px; border-radius: 8px; cursor: pointer; border: 2px solid #3e4451; transition: 0.3s; font-size: 1.1em !important; color: #abb2bf; }
+        .options li:hover { background-color: #2c313a; border-color: var(--primary-color); color: #ffffff; }
+        .feedback { font-weight: bold; padding: 15px; border-radius: 8px; display: none; font-size: 1.2em; margin-top: 15px; }
+        .correct { background-color: rgba(40, 167, 69, 0.1); color: #73c990; border: 2px solid #73c990; }
+        .wrong { background-color: rgba(220, 53, 69, 0.1); color: #e06c75; border: 2px solid #e06c75; }
+        
+        .chapter-nav { display: flex; gap: 20px; margin-top: 40px; }
+        .chapter-btn { display: inline-block; padding: 15px 30px; background-color: #3e4451; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.2em; transition: 0.3s; }
+        .chapter-btn.next { background-color: var(--primary-color); color: #1e1e1e; }
+        .chapter-btn:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div class="fixed-chapter-nav">
+    <a href="index.html">🏠 回首頁目錄</a>
+    <a href="chapter5.html">⏮️ 上一章 (第5章)</a>
+    <a href="chapter7.html">下一章 (第7章) ⏭️</a>
+</div>
+
+    <div class="page-counter"><span id="current-page">1</span> / <span id="total-pages"></span></div>
+
+    <div class="nav-btns">
+        <button class="nav-btn" id="prev-btn" onclick="moveSlide(-1)" disabled>⬅️ 上一頁</button>
+        <button class="nav-btn" id="next-btn" onclick="moveSlide(1)">下一頁 ➡️</button>
+    </div>
+
+    <div class="deck-container" id="deck">
+
+        <section class="slide active">
+            <h1>行銷與商業模式：從零到一</h1>
+            <p style="font-size: 1.8em; text-align: center;">第 6 章：精準鎖定你的客人</p>
+            <p style="font-size: 2.2em; color: var(--accent-color); font-weight: bold; text-align: center;">STP 理論 (Segmentation, Targeting, Positioning)</p>
+        </section>
+
+        <section class="slide">
+            <h2>1. 為什麼需要 STP？</h2>
+            <p>現代行銷學之父 Philip Kotler 說過：「如果你試圖把產品賣給所有人，你最終將賣給沒有人。」</p>
+            <p>STP 是行銷戰略的核心骨幹，分為三個連續的步驟：</p>
+            <ul>
+                <li><strong style="color: #61afef;">S (Segmentation) 市場區隔：</strong> 把大市場切成一塊塊的小蛋糕。</li>
+                <li><strong style="color: #e5c07b;">T (Targeting) 目標市場：</strong> 決定我們要吃哪幾塊蛋糕。</li>
+                <li><strong style="color: #e06c75;">P (Positioning) 市場定位：</strong> 在吃蛋糕的人心中，留下一個無法取代的印象。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>2. S: 市場區隔 (Segmentation)</h2>
+            <p>將一群「需求不同」的消費者，根據特定變數，劃分成幾個「需求相似」的小群體。常用的切刀（變數）有四種：</p>
+            <ul>
+                <li><strong>地理變數：</strong> 國家、城市、氣候（例如：南部口味偏甜、北部偏鹹）。</li>
+                <li><strong>人口統計變數：</strong> 年齡、性別、收入、職業（例如：針對小資女的平價保養品）。</li>
+                <li><strong>心理變數：</strong> 價值觀、生活型態、個性（例如：崇尚環保極簡的人）。</li>
+                <li><strong>行為變數：</strong> 使用頻率、忠誠度、追求的利益（例如：買牙膏是為了「美白」還是「抗敏感」？）。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>3. T: 目標市場 (Targeting)</h2>
+            <p>切好蛋糕後，評估哪一塊最肥、最適合我們吃。常見的瞄準策略有三種：</p>
+            <ul>
+                <li><strong>無差異行銷 (大眾市場)：</strong> 忽略差異，用同一種產品打所有人（例如：自來水、早期的可口可樂）。</li>
+                <li><strong>差異化行銷 (分眾市場)：</strong> 挑選好幾個區塊，並為每個區塊推出不同的產品（例如：Toyota 有平價的 Vios，也有頂級的 Lexus）。</li>
+                <li><strong>集中行銷 (利基市場 Niche)：</strong> 資源有限時，死守一個非常小但很精準的區塊（例如：專做「左撇子專用剪刀」的公司）。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>4. P: 市場定位 (Positioning)</h2>
+            
+
+[Image of perceptual map marketing]
+
+            <p>找好目標客人後，你要如何在他們的「腦海裡」佔據一個獨特的位置？</p>
+            <p><strong>定位不是你對「產品」做了什麼，而是你對「消費者的腦袋」做了什麼。</strong></p>
+            <ul>
+                <li><strong>Volvo 的定位：</strong> 安全。</li>
+                <li><strong>Ferrari 的定位：</strong> 速度與奢華。</li>
+                <li>你要讓客人想到某個「痛點」或「關鍵字」時，第一個就想到你！這通常會利用「知覺圖 (Perceptual Map)」來找出市場空缺。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>5. 實戰演練：花蓮小農手搖飲</h2>
+            <p>我們把 STP 套用到先前的創業情境中：</p>
+            <ul>
+                <li><strong>S (區隔)：</strong> 依據行為與心理變數，我們發現花蓮買飲料的人可分為：(A) 追求便宜解渴的學生、(B) 重視食安與健康的上班族、(C) 喜歡打卡拍照的觀光客。</li>
+                <li><strong>T (目標)：</strong> 我們資金有限且成本高（用在地小農鮮乳），因此放棄便宜的學生市場，鎖定 <strong class="highlight">(B) 重視健康的上班族</strong> 與 <strong class="highlight">(C) 觀光客</strong>。</li>
+                <li><strong>P (定位)：</strong> 我們不強調「好喝」，而是主打<strong style="color: #e5c07b;">「每一口都喝得到花蓮土地的純淨」</strong>。建立「高質感、支持在地、無添加」的品牌心智標籤。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h1>📝 第六章 綜合實戰測驗</h1>
+            <p style="font-size: 1.8em; text-align: center; color: #abb2bf;">10 題情境題，測試你切蛋糕與洗腦（定位）的功力！</p>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q1. STP 順序</h2>
+            <p class="question">Q1: 在進行 STP 戰略規劃時，最正確的邏輯順序是什麼？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 先定位品牌形象 (P)，再尋找適合的目標客群 (T)。</li>
+                <li data-status="correct">B. 先把市場切塊 (S)，挑選出目標客群 (T)，最後再決定如何在他們心中建立定位 (P)。</li>
+                <li data-status="wrong">C. 先挑選目標客群 (T)，再把他們切細 (S)。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q2. 市場區隔變數 (Segmentation)</h2>
+            <p class="question">Q2: 某信用卡公司透過數據發現，喜歡「深夜在電商購物」的客群，違約率異常高。於是他們決定針對這個特性調整發卡策略。這是使用了哪一種區隔變數？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 心理變數</li>
+                <li data-status="correct">B. 行為變數</li>
+                <li data-status="wrong">C. 地理變數</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q3. 市場區隔變數 (Segmentation)</h2>
+            <p class="question">Q3: 無印良品 (MUJI) 吸引了一群「不喜歡過度包裝、追求極簡與自然生活態度」的消費者。這種切分市場的方式主要基於哪種變數？</p>
+            <ul class="options">
+                <li data-status="correct">A. 心理變數 (價值觀與生活型態)</li>
+                <li data-status="wrong">B. 地理變數</li>
+                <li data-status="wrong">C. 人口統計變數</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q4. 目標市場 (Targeting)</h2>
+            <p class="question">Q4: 寶潔公司 (P&G) 旗下有「海飛絲 (主打去屑)」、「潘婷 (主打柔順)」、「沙宣 (主打專業造型)」等多個洗髮精品牌。這屬於哪一種目標市場策略？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 無差異行銷 (大眾市場)</li>
+                <li data-status="wrong">B. 集中行銷 (利基市場)</li>
+                <li data-status="correct">C. 差異化行銷 (為不同的細分市場推出不同的產品)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q5. 目標市場 (Targeting)</h2>
+            <p class="question">Q5: 某家新創小公司資金極度匱乏，但老闆本身是重度攀岩玩家，於是他們決定把所有資源全部投入在「室內抱石專用鎂粉」這個極小的市場。這是哪種策略？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 差異化行銷</li>
+                <li data-status="wrong">B. 無差異行銷</li>
+                <li data-status="correct">C. 集中行銷 (利基市場)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q6. 市場定位 (Positioning)</h2>
+            <p class="question">Q6: 行銷學大師如何定義「定位 (Positioning)」？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 決定要把產品擺在超市貨架上的哪一層。</li>
+                <li data-status="correct">B. 企業在「目標消費者的心智中」，為產品創造一個獨特且有價值的位置。</li>
+                <li data-status="wrong">C. 決定產品要在哪一個國家生產。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q7. 知覺圖的應用</h2>
+            <p class="question">Q7: 行銷人員常畫一個十字座標圖（例如 X軸是價格高低，Y軸是年輕/成熟），把市場上的競爭對手都標示上去。這個工具主要用來輔助 STP 的哪一個步驟？</p>
+            <ul class="options">
+                <li data-status="correct">A. 定位 (Positioning) - 用來找出市場上還沒有人佔據的空白地帶。</li>
+                <li data-status="wrong">B. 市場區隔 (Segmentation)</li>
+                <li data-status="wrong">C. 目標市場 (Targeting)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q8. STP 錯誤診斷</h2>
+            <p class="question">Q8: 老闆說：「我們的保養品天然又抗老，不管是 18 歲的大學生還是 60 歲的阿嬤，一定都會喜歡！」從 STP 的角度來看，老闆犯了什麼大忌？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 沒有設定好產品的價格。</li>
+                <li data-status="correct">B. 缺乏市場區隔 (S) 與目標鎖定 (T) 的概念，妄想討好所有人。</li>
+                <li data-status="wrong">C. 沒有去註冊商標。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q9. 定位實戰</h2>
+            <p class="question">Q9: 早期「七喜 (7-Up)」汽水為了對抗強大的可口可樂，打出了「非可樂 (The Uncola)」的口號。這是利用哪一種定位策略？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 價格定位 (強調自己最便宜)</li>
+                <li data-status="wrong">B. 產品屬性定位 (強調裡面加了檸檬)</li>
+                <li data-status="correct">C. 競爭者定位 (直接與市場領導者對立，建立自己是「另一種選擇」的心智定位)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q10. 整合觀念</h2>
+            <p class="question">Q10: 如果你把「STP 策略」和我們先前學過的「BMC 商業模式畫布」結合在一起看，STP 這個過程主要是在幫你釐清 BMC 裡面的哪兩個區塊？</p>
+            <ul class="options">
+                <li data-status="correct">A. 目標客群 (Customer Segments) 與 價值主張 (Value Propositions)</li>
+                <li data-status="wrong">B. 關鍵合作夥伴 (Key Partnerships) 與 成本結構 (Cost Structure)</li>
+                <li data-status="wrong">C. 通路 (Channels) 與 收益流 (Revenue Streams)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide">
+            <h1>🎉 第六章 通關！</h1>
+            <p style="font-size: 1.8em; text-align: center;">你已經學會了如何把市場切塊，並在客人腦中釘下心智標籤！</p>
+            <p style="font-size: 1.1em; text-align: center; margin-top: 30px; color: #abb2bf;">現在我們知道「要賣給誰 (STP)」。<br>下一章，我們要準備真正的武器：傳統 4P 與現代 4C / 7P 理論！</p>
+            <div class="chapter-nav">
+                <a href="chapter5.html" class="chapter-btn">⬅️ 回到第 5 章</a>
+                <a href="chapter7.html" class="chapter-btn next">前往第 7 章：4P 與 7P 理論 ➡️</a>
+            </div>
+        </section>
+
+    </div>
+    <script>
+        // 核心輪播與測驗邏輯
+        const deck = document.getElementById('deck');
+        const slides = document.querySelectorAll('.slide');
+        const totalPagesSpan = document.getElementById('total-pages');
+        const currentPageSpan = document.getElementById('current-page');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+        totalPagesSpan.innerText = totalSlides;
+
+        function moveSlide(direction) {
+            currentSlideIndex = currentSlideIndex + direction;
+            if (currentSlideIndex < 0) { currentSlideIndex = 0; }
+            if (currentSlideIndex >= totalSlides) { currentSlideIndex = totalSlides - 1; }
+            updateDeckView();
+        }
+
+        function updateDeckView() {
+            deck.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) { slide.classList.add('active'); } 
+                else { slide.classList.remove('active'); }
+            });
+            currentPageSpan.innerText = currentSlideIndex + 1;
+            prevBtn.disabled = (currentSlideIndex === 0);
+            nextBtn.disabled = (currentSlideIndex === totalSlides - 1);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { moveSlide(-1); }
+            if (e.key === 'ArrowRight') { moveSlide(1); }
+        });
+
+        const quizSlides = document.querySelectorAll('.quiz-slide');
+        quizSlides.forEach(slide => {
+            const options = slide.querySelectorAll('.options li');
+            const feedbackDiv = slide.querySelector('.feedback');
+
+            options.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    options.forEach(o => { o.style.backgroundColor = '#282c34'; o.style.borderColor = '#3e4451'; o.style.color = '#abb2bf'; });
+                    const status = this.getAttribute('data-status');
+                    feedbackDiv.style.display = 'block';
+
+                    if (status === 'correct') {
+                        this.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+                        this.style.borderColor = '#73c990';
+                        this.style.color = '#73c990';
+                        feedbackDiv.innerText = '判斷精準！完全正確。';
+                        feedbackDiv.className = 'feedback correct';
+                    } else {
+                        this.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+                        this.style.borderColor = '#e06c75';
+                        this.style.color = '#e06c75';
+                        feedbackDiv.innerText = '觀念有點混淆，請再回想一下兩個矩陣的定義喔。';
+                        feedbackDiv.className = 'feedback wrong';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
