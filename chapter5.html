@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行銷與商業模式 | 第5章：BCG 與安索夫矩陣</title>
+    <style>
+        /* V2.0 深色護眼模式 */
+        :root {
+            --primary-color: #61afef;
+            --accent-color: #e5c07b;
+            --bg-color: #121212;
+            --slide-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        .deck-container { width: 100vw; height: 100vh; display: flex; transition: transform 0.5s ease-in-out; }
+        .slide { min-width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px; box-sizing: border-box; background-color: var(--slide-bg); opacity: 0; transition: opacity 0.3s ease; }
+        .slide.active { opacity: 1; }
+        
+        .slide h1 { color: var(--primary-color); font-size: 3em; margin-bottom: 20px; text-align: center; }
+        .slide h2 { color: var(--accent-color); font-size: 2.2em; border-left: 8px solid var(--accent-color); padding-left: 20px; align-self: flex-start; margin-left: 10%; }
+        
+        /* 修正斷行 Bug */
+        .slide p { font-size: 1.4em; line-height: 1.6; max-width: 80%; text-align: justify; color: #cccccc; }
+        .slide li { font-size: 1.4em; line-height: 1.6; text-align: justify; color: #cccccc; margin-bottom: 10px; }
+        .slide ul { align-self: flex-start; margin-left: 15%; max-width: 80%; }
+        
+        .highlight { background-color: rgba(229, 192, 123, 0.2); color: #e5c07b; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+        
+        .nav-btns { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+        .nav-btn { padding: 15px 25px; background-color: #2c313a; color: #abb2bf; border: 1px solid #3e4451; border-radius: 5px; cursor: pointer; font-size: 1.1em; font-weight: bold; transition: 0.3s; }
+        .nav-btn:hover { background-color: var(--primary-color); color: #1e1e1e; }
+        .nav-btn:disabled { background-color: #1e1e1e; color: #5c6370; cursor: not-allowed; border-color: #2c313a; }
+        .page-counter { position: fixed; bottom: 30px; left: 30px; font-size: 1.2em; color: #5c6370; z-index: 100; }
+
+        /* 全域常駐章節導覽列 */
+        .fixed-chapter-nav { position: fixed; top: 20px; left: 30px; display: flex; gap: 15px; z-index: 100; }
+        .fixed-chapter-nav a { padding: 10px 20px; background-color: #2c313a; color: #abb2bf; text-decoration: none; border-radius: 5px; font-size: 1em; border: 1px solid #3e4451; transition: 0.3s; }
+        .fixed-chapter-nav a:hover { background-color: #3e4451; color: #ffffff; }
+
+        /* 測驗區塊深色化 */
+        .quiz-container { text-align: left; align-self: center !important; width: 80%; }
+        .options { list-style-type: none; padding: 0; width: 100%; margin: 20px 0;}
+        .options li { background-color: #282c34; margin-bottom: 15px; padding: 15px; border-radius: 8px; cursor: pointer; border: 2px solid #3e4451; transition: 0.3s; font-size: 1.1em !important; color: #abb2bf; }
+        .options li:hover { background-color: #2c313a; border-color: var(--primary-color); color: #ffffff; }
+        .feedback { font-weight: bold; padding: 15px; border-radius: 8px; display: none; font-size: 1.2em; margin-top: 15px; }
+        .correct { background-color: rgba(40, 167, 69, 0.1); color: #73c990; border: 2px solid #73c990; }
+        .wrong { background-color: rgba(220, 53, 69, 0.1); color: #e06c75; border: 2px solid #e06c75; }
+        
+        .chapter-nav { display: flex; gap: 20px; margin-top: 40px; }
+        .chapter-btn { display: inline-block; padding: 15px 30px; background-color: #3e4451; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.2em; transition: 0.3s; }
+        .chapter-btn.next { background-color: var(--primary-color); color: #1e1e1e; }
+        .chapter-btn:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div class="fixed-chapter-nav">
+        <a href="index.html">🏠 回首頁目錄</a>
+        <a href="chapter4.html">⏮️ 上一章 (第4章)</a>
+        <a href="chapter6.html">下一章 (第6章) ⏭️</a>
+    </div>
+
+    <div class="page-counter"><span id="current-page">1</span> / <span id="total-pages"></span></div>
+
+    <div class="nav-btns">
+        <button class="nav-btn" id="prev-btn" onclick="moveSlide(-1)" disabled>⬅️ 上一頁</button>
+        <button class="nav-btn" id="next-btn" onclick="moveSlide(1)">下一頁 ➡️</button>
+    </div>
+
+    <div class="deck-container" id="deck">
+
+        <section class="slide active">
+            <h1>行銷與商業模式：從零到一</h1>
+            <p style="font-size: 1.8em; text-align: center;">第 5 章：產品組合與成長路徑</p>
+            <p style="font-size: 2.2em; color: var(--accent-color); font-weight: bold; text-align: center;">BCG 矩陣 與 安索夫矩陣</p>
+        </section>
+
+        <section class="slide">
+            <h2>1. 戰略的落地：把錢花在刀口上</h2>
+            <p>做完 SWOT 診斷後，我們知道公司要前進。但具體來說，手上的產品線該怎麼佈局？未來要往哪個方向成長？</p>
+            <ul>
+                <li><strong style="color: #61afef;">波士頓矩陣 (BCG Matrix)：</strong> 幫你「盤點現狀」。決定公司內部哪些產品該投資、哪些該殺掉。</li>
+                <li><strong style="color: #e06c75;">安索夫矩陣 (Ansoff Matrix)：</strong> 幫你「規劃未來」。指引公司營收成長的四條路徑與風險。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>2. BCG 矩陣：成長率 vs. 市占率</h2>
+            <p>由波士頓顧問集團 (BCG) 發明。它用兩個維度把產品分成四類：</p>
+            <ul>
+                <li><strong>Y 軸：市場成長率 (Market Growth Rate)。</strong> 代表這個產業/賽道未來的潛力。成長率高，代表需求大爆發（但通常也要燒很多錢去搶地盤）。</li>
+                <li><strong>X 軸：相對市占率 (Relative Market Share)。</strong> 代表你跟最強對手相比，你的競爭力有多強。市占率高，代表你能享有規模經濟，能賺到現金。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>3. BCG：明星 (Stars) 與 金牛 (Cash Cows)</h2>
+            <p><strong>🌟 明星產品 (高成長、高市占)：</strong></p>
+            <ul>
+                <li>市場正在爆發，而你又是領頭羊！這需要投入大量資金維持領先。</li>
+                <li><strong>戰略：</strong> 擴張。不惜代價保住王座。（例：早期的 iPhone）</li>
+            </ul>
+            <p><strong>🐄 金牛產品 (低成長、高市占)：</strong></p>
+            <ul>
+                <li>市場已經成熟、不怎麼成長了，但你是霸主，成本極低。這是公司的「印鈔機」。</li>
+                <li><strong>戰略：</strong> 榨取現金。盡量少投資，把賺來的錢拿去養其他產品。（例：現在的微軟 Windows 系統）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>4. BCG：問題兒童 (Question Marks) 與 瘦狗 (Dogs)</h2>
+            <p><strong>❓ 問題兒童 (高成長、低市占)：</strong></p>
+            <ul>
+                <li>市場潛力很大，但你目前打不贏對手。它是個吃錢怪獸。</li>
+                <li><strong>戰略：</strong> 抉擇。要嘛砸大錢把它變成「明星」，要嘛果斷放棄。（例：Meta 砸重金開發的元宇宙硬體）</li>
+            </ul>
+            <p><strong>🐶 瘦狗產品 (低成長、低市占)：</strong></p>
+            <ul>
+                <li>市場已經沒救了，你也賣輸別人。留著只是在消耗資源。</li>
+                <li><strong>戰略：</strong> 撤退。賣掉、關閉或縮編。（例：已經沒人在用的舊款數位相機產線）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>5. 資金循環：養小鬼還是養明星？</h2>
+            <p>健康的企業，其產品組合應該是一個完美的<span class="highlight">現金流循環</span>：</p>
+            <p>把 <strong>金牛🐄</strong> 賺來的龐大現金，拿去投資有潛力的 <strong>問題兒童❓</strong>；<br>
+               讓問題兒童順利長大變成 <strong>明星🌟</strong>；<br>
+               當市場逐漸成熟，明星就會老去，變成下一代穩定的 <strong>金牛🐄</strong>。<br>
+               (至於瘦狗？早點安樂死止血吧。)</p>
+        </section>
+
+        <section class="slide">
+            <h2>6. 安索夫矩陣：產品 vs. 市場</h2>
+            <p>當公司決定要「擴張成長」時，戰略之父 Igor Ansoff 提出了四條路徑。由兩個維度構成：</p>
+            <ul>
+                <li><strong>X 軸：產品 (Products)。</strong> 分為「現有產品」與「新產品」。</li>
+                <li><strong>Y 軸：市場/客群 (Markets)。</strong> 分為「現有市場」與「新市場」。</li>
+            </ul>
+            <p>這不只是一個分類表，更是一個<strong>「風險評估表」</strong>（越往新產品、新市場走，風險越高）。</p>
+        </section>
+
+        <section class="slide">
+            <h2>7. 安索夫：滲透與開發</h2>
+            <p><strong>🎯 市場滲透 (現有產品 ＋ 現有市場)：</strong> 風險最低。</p>
+            <ul>
+                <li><strong>策略：</strong> 讓原本的客人買更多、買更頻繁，或從對手那邊搶客人。</li>
+                <li><strong>作法：</strong> 買一送一、集點卡、會員訂閱制。（例：星巴克推星禮程會員）</li>
+            </ul>
+            <p><strong>🌍 市場開發 (現有產品 ＋ 新市場)：</strong> 中度風險。</p>
+            <ul>
+                <li><strong>策略：</strong> 東西不變，拿去賣給「新的人」或「新的國家」。</li>
+                <li><strong>作法：</strong> 跨國展店、開拓B2B客戶、原本賣給女生的保養品改包裝賣給男生。（例：捷安特進軍歐洲市場）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>8. 安索夫：產品創新與多角化</h2>
+            <p><strong>🛠️ 產品開發 (新產品 ＋ 現有市場)：</strong> 中度風險。</p>
+            <ul>
+                <li><strong>策略：</strong> 針對原本那群忠實客戶，研發全新的產品賣給他們。</li>
+                <li><strong>作法：</strong> 蘋果發現買 iPhone 的客人都很忠誠，於是開發了 Apple Watch 賣給同一批人。</li>
+            </ul>
+            <p><strong>🎲 多角化 (新產品 ＋ 新市場)：</strong> 風險最高！</p>
+            <ul>
+                <li><strong>策略：</strong> 踏入完全不懂的領域，做全新的東西賣給不認識的客人。</li>
+                <li><strong>作法：</strong> 統一企業從賣泡麵（食品業），跨足去開 7-11（零售通路業）。高風險，但成功就能建立帝國。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h1>📝 第五章 綜合實戰測驗</h1>
+            <p style="font-size: 1.8em; text-align: center; color: #abb2bf;">10 題情境題，檢驗你的產品線配置與成長策略！</p>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q1. BCG 判定</h2>
+            <p class="question">Q1: 某傳統紙本字典出版社發現紙本字典市場「每年都在大幅衰退（負成長）」，而且他們在該市場的「市占率也輸給對手」。這個產品在 BCG 矩陣中屬於？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 問題兒童 (Question Marks)</li>
+                <li data-status="wrong">B. 金牛 (Cash Cows)</li>
+                <li data-status="correct">C. 瘦狗 (Dogs)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q2. BCG 判定</h2>
+            <p class="question">Q2: 可口可樂的「經典紅色包裝可樂」，市場成長已經停滯，但市占率依然是全球第一，每年為公司帶來巨額穩定的現金流。這屬於？</p>
+            <ul class="options">
+                <li data-status="correct">A. 金牛 (Cash Cows)</li>
+                <li data-status="wrong">B. 明星 (Stars)</li>
+                <li data-status="wrong">C. 問題兒童 (Question Marks)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q3. BCG 策略</h2>
+            <p class="question">Q3: 公司剛研發出一款「AI 智慧伴睡機器人」，目前市場需求以每年 300% 的速度爆發，但公司剛起步，市占率極低。這屬於「問題兒童」，請問最佳戰略是？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 盡量不要花錢，能賺多少算多少，把它當印鈔機。</li>
+                <li data-status="correct">B. 評估競爭力，若有機會贏，就把「金牛」賺來的錢大量砸進去，把它推向「明星」。</li>
+                <li data-status="wrong">C. 因為市占率太低，應該立刻關閉產線（瘦狗策略）。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q4. BCG 資金流</h2>
+            <p class="question">Q4: 根據 BCG 矩陣的健康資金循環理論，企業用來「研發新產品」或「搶奪新市場」的大量現金，主要應該由哪個區塊來提供？</p>
+            <ul class="options">
+                <li data-status="correct">A. 金牛 (Cash Cows)</li>
+                <li data-status="wrong">B. 明星 (Stars)</li>
+                <li data-status="wrong">C. 問題兒童 (Question Marks)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q5. Ansoff 判定</h2>
+            <p class="question">Q5: 全聯福利中心推出「PX Pay」和點數回饋機制，鼓勵原本就在全聯買菜的婆婆媽媽們「買更多、更常來買」。這在安索夫矩陣中屬於哪種成長策略？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 產品開發 (Product Development)</li>
+                <li data-status="wrong">B. 市場開發 (Market Development)</li>
+                <li data-status="correct">C. 市場滲透 (Market Penetration)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q6. Ansoff 判定</h2>
+            <p class="question">Q6: 鼎泰豐原本只在台灣開店，後來將相同的「小籠包與 SOP 服務」原封不動地搬到日本、美國去開設分店。這屬於哪種成長策略？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 市場滲透 (Market Penetration)</li>
+                <li data-status="correct">B. 市場開發 (Market Development)</li>
+                <li data-status="wrong">C. 多角化 (Diversification)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q7. Ansoff 判定</h2>
+            <p class="question">Q7: 麥當勞發現原本吃漢堡薯條的客群，早上也有吃早餐的需求。於是推出了全新的「滿福堡與咖啡」賣給這些原本的客人。這是？</p>
+            <ul class="options">
+                <li data-status="correct">A. 產品開發 (Product Development)</li>
+                <li data-status="wrong">B. 市場開發 (Market Development)</li>
+                <li data-status="wrong">C. 多角化 (Diversification)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q8. Ansoff 判定</h2>
+            <p class="question">Q8: 台灣的巨大機械原本是製造腳踏車的工廠，後來跨足去經營「微笑單車 YouBike (公共運輸服務業)」，客群從買車的人變成了租車通勤族。這是風險最高的哪種策略？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 產品開發</li>
+                <li data-status="correct">B. 多角化 (Diversification - 新產品與新市場)</li>
+                <li data-status="wrong">C. 市場開發</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q9. BCG 與 Ansoff 的結合</h2>
+            <p class="question">Q9: 某公司的一款產品在 BCG 矩陣中已經淪為「瘦狗」。如果不想直接放棄，決定採用 Ansoff 的「市場開發」來做最後掙扎，他們可能會怎麼做？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 降價促銷，看原本的客人願不願意多買一點。</li>
+                <li data-status="correct">B. 把這款在先進國家已經淘汰的舊產品，外銷到經濟剛起步的開發中國家去賣。</li>
+                <li data-status="wrong">C. 投入鉅資研發下一代全新產品。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q10. 戰略思維</h2>
+            <p class="question">Q10: 為什麼「多角化 (Diversification)」在安索夫矩陣中被視為風險最高的策略？</p>
+            <ul class="options">
+                <li data-status="correct">A. 因為企業同時脫離了自己熟悉的「產品技術」與熟悉的「顧客群」，一切都要從零開始摸索。</li>
+                <li data-status="wrong">B. 因為政府通常會對多角化經營的企業課徵重稅。</li>
+                <li data-status="wrong">C. 因為多角化一定會讓公司內部的金牛產品瞬間變成瘦狗。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide">
+            <h1>🎉 第五章 通關！</h1>
+            <p style="font-size: 1.8em; text-align: center;">你已經掌握了企業擴張與資源配置的地圖</p>
+            <p style="font-size: 1.1em; text-align: center; margin-top: 30px; color: #abb2bf;">現在我們知道產品該往哪裡走了。<br>下一章，我們要把準星對齊，進入行銷界最無敵的「STP 理論」！</p>
+            <div class="chapter-nav">
+                <a href="chapter4.html" class="chapter-btn">⬅️ 回到第 4 章</a>
+                <a href="chapter6.html" class="chapter-btn next">前往第 6 章：STP 理論 ➡️</a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // 核心輪播與測驗邏輯
+        const deck = document.getElementById('deck');
+        const slides = document.querySelectorAll('.slide');
+        const totalPagesSpan = document.getElementById('total-pages');
+        const currentPageSpan = document.getElementById('current-page');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+        totalPagesSpan.innerText = totalSlides;
+
+        function moveSlide(direction) {
+            currentSlideIndex = currentSlideIndex + direction;
+            if (currentSlideIndex < 0) { currentSlideIndex = 0; }
+            if (currentSlideIndex >= totalSlides) { currentSlideIndex = totalSlides - 1; }
+            updateDeckView();
+        }
+
+        function updateDeckView() {
+            deck.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) { slide.classList.add('active'); } 
+                else { slide.classList.remove('active'); }
+            });
+            currentPageSpan.innerText = currentSlideIndex + 1;
+            prevBtn.disabled = (currentSlideIndex === 0);
+            nextBtn.disabled = (currentSlideIndex === totalSlides - 1);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { moveSlide(-1); }
+            if (e.key === 'ArrowRight') { moveSlide(1); }
+        });
+
+        const quizSlides = document.querySelectorAll('.quiz-slide');
+        quizSlides.forEach(slide => {
+            const options = slide.querySelectorAll('.options li');
+            const feedbackDiv = slide.querySelector('.feedback');
+
+            options.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    options.forEach(o => { o.style.backgroundColor = '#282c34'; o.style.borderColor = '#3e4451'; o.style.color = '#abb2bf'; });
+                    const status = this.getAttribute('data-status');
+                    feedbackDiv.style.display = 'block';
+
+                    if (status === 'correct') {
+                        this.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+                        this.style.borderColor = '#73c990';
+                        this.style.color = '#73c990';
+                        feedbackDiv.innerText = '判斷精準！完全正確。';
+                        feedbackDiv.className = 'feedback correct';
+                    } else {
+                        this.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+                        this.style.borderColor = '#e06c75';
+                        this.style.color = '#e06c75';
+                        feedbackDiv.innerText = '觀念有點混淆，請再回想一下兩個矩陣的定義喔。';
+                        feedbackDiv.className = 'feedback wrong';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
