@@ -3,156 +3,504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>行銷與商業模式學習講義 | 第2章</title>
+    <title>行銷與商業模式 | 第2章：BMC 簡報模式</title>
     <style>
-        body {
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --slide-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden; /* 隱藏捲軸，呈現全螢幕簡報感 */
         }
-        header {
-            text-align: center;
-            padding: 30px 0;
-            border-bottom: 2px solid #2c3e50;
-            margin-bottom: 30px;
+
+        /* 簡報容器 */
+        .deck-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            transition: transform 0.5s ease-in-out;
         }
-        h1 { color: #2c3e50; font-size: 2.2em; margin-bottom: 10px; }
-        h2 { color: #34495e; border-left: 5px solid #3498db; padding-left: 15px; margin-top: 40px; }
-        h3 { color: #2980b9; }
-        p { font-size: 1.1em; margin-bottom: 20px; }
-        .highlight { background-color: #ffeaa7; padding: 2px 5px; border-radius: 3px; }
-        .box {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+
+        /* 單張幻燈片樣式 */
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            box-sizing: border-box;
+            background-color: var(--slide-bg);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .canvas-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* 標題與文字樣式 */
+        .slide h1 { color: var(--primary-color); font-size: 3em; margin-bottom: 20px; text-align: center; }
+        .slide h2 { color: var(--accent-color); font-size: 2.2em; border-left: 8px solid var(--accent-color); padding-left: 20px; align-self: flex-start; margin-left: 10%; }
+        .slide p, .slide li { font-size: 1.4em; line-height: 1.6; max-width: 80%; text-align: justify; }
+        .slide ul { align-self: flex-start; margin-left: 15%; }
+        .highlight { background-color: #ffeaa7; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+
+        /* 導航按鈕樣式 */
+        .nav-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
             gap: 15px;
-            margin-top: 20px;
+            z-index: 100;
         }
-        .canvas-item {
-            background-color: #f0f4f8;
-            padding: 15px;
-            border-left: 4px solid #2980b9;
-            border-radius: 4px;
-        }
-        /* 測驗區塊樣式 */
-        .quiz-container {
-            background-color: #e8f6f3;
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid #1abc9c;
-            margin-top: 40px;
-        }
-        .question { font-weight: bold; font-size: 1.2em; margin-bottom: 15px; }
-        .options { list-style-type: none; padding: 0; }
-        .options li {
-            background-color: #fff;
-            margin-bottom: 10px;
-            padding: 12px;
+
+        .nav-btn {
+            padding: 15px 25px;
+            background-color: rgba(44, 62, 80, 0.8);
+            color: white;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
-            border: 1px solid #ccc;
+            font-size: 1.1em;
+            font-weight: bold;
             transition: 0.3s;
         }
-        .options li:hover { background-color: #d1f2eb; border-color: #1abc9c; }
-        .feedback {
-            margin-top: 15px;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
+
+        .nav-btn:hover { background-color: rgba(52, 152, 219, 1); }
+        .nav-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* 頁碼顯示 */
+        .page-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-size: 1.2em;
+            color: #7f8c8d;
+            z-index: 100;
         }
-        .correct { background-color: #d5f5e3; color: #27ae60; border: 1px solid #27ae60; }
-        .wrong { background-color: #fadbd8; color: #c0392b; border: 1px solid #c0392b; }
-        nav { margin-bottom: 20px; text-align: right; }
-        nav a { text-decoration: none; color: #3498db; font-weight: bold; }
-        nav a:hover { text-decoration: underline; }
+
+        /* 測驗區塊專用樣式 */
+        .quiz-container { text-align: left; align-self: center !important; }
+        .options { list-style-type: none; padding: 0; width: 100%; margin: 20px 0;}
+        .options li {
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid #eee;
+            transition: 0.3s;
+            font-size: 1.1em !important;
+        }
+        .options li:hover { background-color: #eaf2f8; border-color: #3498db; }
+        .feedback {
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 1.2em;
+        }
+        .correct { background-color: #d5f5e3; color: #27ae60; border: 2px solid #27ae60; }
+        .wrong { background-color: #fadbd8; color: #c0392b; border: 2px solid #c0392b; }
+
+        /* 章節導覽按鈕 */
+        .chapter-nav {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .chapter-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: 0.3s;
+        }
+        .chapter-btn.next { background-color: var(--accent-color); }
+        .chapter-btn:hover { opacity: 0.8; }
+
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="index.html">🔙 回到第 1 章</a>
-    </nav>
+    <div class="page-counter"><span id="current-page">1</span> / <span id="total-pages"></span></div>
 
-    <header>
-        <h1>行銷與商業模式：從零到一</h1>
-        <p>第 2 章：拆解賺錢引擎（商業模式畫布 BMC）</p>
-    </header>
+    <div class="nav-btns">
+        <button class="nav-btn" id="prev-btn" onclick="moveSlide(-1)" disabled>⬅️ 上一頁</button>
+        <button class="nav-btn" id="next-btn" onclick="moveSlide(1)">下一頁 ➡️</button>
+    </div>
 
-    <main>
-        <div class="box">
-            <h2>1. BMC 的核心邏輯：九宮格與左右腦</h2>
-            <p>商業模式畫布 (Business Model Canvas) 由 9 個區塊組成。你可以把它想像成一個天平，中間是你的「產品價值」，右邊是「市場（賺錢）」，左邊是「營運（花錢）」。</p>
-            <p><strong>👑 核心靈魂：</strong><br>
-            <span class="highlight">價值主張 (Value Propositions)：</span> 你替客人解決了什麼問題？你提供什麼獨特價值？這是整盤生意的起點。</p>
-        </div>
+    <div class="deck-container" id="deck">
 
-        <div class="box">
-            <h2>2. 畫布右半部：前端市場（創造價值與營收）</h2>
-            <p>右半部關注的是「外部市場」，也就是你如何找到客人並讓他們掏錢。</p>
-            <div class="canvas-grid">
-                <div class="canvas-item"><strong>目標客群 (Customer Segments)：</strong><br>誰是你的客人？是所有人，還是特定的利基市場（Niche Market）？</div>
-                <div class="canvas-item"><strong>通路 (Channels)：</strong><br>客人怎麼買到你的東西？（實體店面、電商網站、APP？）</div>
-                <div class="canvas-item"><strong>顧客關係 (Customer Relationships)：</strong><br>你跟客人是什麼關係？是一次性交易，還是長期訂閱制的會員？</div>
-                <div class="canvas-item"><strong>收益流 (Revenue Streams)：</strong><br>錢怎麼進來？是賣斷產品、收手續費、還是收月費？</div>
-            </div>
-        </div>
+        <section class="slide active">
+            <h1>行銷與商業模式：從零到一</h1>
+            <p style="font-size: 1.8em; text-align: center;">第 2 章：拆解賺錢引擎</p>
+            <p style="font-size: 2.2em; color: var(--accent-color); font-weight: bold; text-align: center;">商業模式畫布 (BMC)</p>
+            <p style="font-size: 1.1em; color: #7f8c8d; text-align: center; margin-top: 50px;">(可使用鍵盤 ← / → 鍵切換幻燈片)</p>
+        </section>
 
-        <div class="box">
-            <h2>3. 畫布左半部：後端基礎（支撐營運與成本）</h2>
-            <p>左半部關注的是「內部營運」，為了實現右邊的承諾，你必須在後台做哪些準備、花哪些錢。</p>
-            <div class="canvas-grid">
-                <div class="canvas-item"><strong>關鍵資源 (Key Resources)：</strong><br>你必須擁有什麼資產？（專利技術、強大品牌、優秀工程師？）</div>
-                <div class="canvas-item"><strong>關鍵活動 (Key Activities)：</strong><br>你每天必須做好什麼事？（軟體開發、供應鏈管理、內容創作？）</div>
-                <div class="canvas-item"><strong>關鍵合作夥伴 (Key Partnerships)：</strong><br>誰能幫你？（上游供應商、物流公司、金流平台？）</div>
-                <div class="canvas-item"><strong>成本結構 (Cost Structure)：</strong><br>錢花去哪了？（伺服器費用、員工薪水、行銷廣告費？）</div>
-            </div>
-        </div>
+        <section class="slide">
+            <h2>1. BMC 的核心概念</h2>
+            <p><strong>Business Model Canvas (BMC)</strong> 是由瑞士學者 Alexander Osterwalder 提出的決策工具。</p>
+            <p>它將複雜的企業運作邏輯，濃縮在一張圖表中的 <span class="highlight">9 個核心區塊</span>，幫助創業者或經理人快速梳理、溝通並優化其「價值創造」與「獲獲利模式」。</p>
+        </section>
 
-        <div class="quiz-container">
-            <h3>📝 第二章：隨堂知識測驗</h3>
-            <p class="question">情境題：假設你正在分析「Netflix」的商業模式。他們花費了數十億美元購買電影版權，並自己拍攝原創影集（如《怪奇物語》）。請問，這些「影視版權」與「拍攝原創內容的行為」，在 BMC 畫布中分別屬於哪兩個區塊？</p>
-            <ul class="options">
-                <li onclick="checkAnswer(this, 'wrong', '分析有誤。通路是指將服務傳遞給客人的管道（如 Netflix APP），顧客關係是指如何維繫用戶。版權與拍攝內容屬於內部的後勤基礎。')">A. 通路 (Channels) 與 顧客關係 (Customer Relationships)</li>
-                <li onclick="checkAnswer(this, 'correct', '精準命中！「影視版權」是 Netflix 不可或缺的【關鍵資源】；而「拍攝原創內容」則是他們為了維持競爭力必須執行的【關鍵活動】。')">B. 關鍵資源 (Key Resources) 與 關鍵活動 (Key Activities)</li>
-                <li onclick="checkAnswer(this, 'wrong', '邏輯不對。價值主張是「隨選隨看的娛樂體驗」，收益流則是「每月的訂閱費」。版權與拍攝是支撐這個主張背後的成本與行動。')">C. 價值主張 (Value Propositions) 與 收益流 (Revenue Streams)</li>
+        <section class="slide">
+            <h2>2. BMC 的九個積木</h2>
+            <ul style="font-size: 1.2em; columns: 2; column-gap: 50px;">
+                <li>1. 目標客群 (Customer Segments)</li>
+                <li>2. 價值主張 (Value Propositions)</li>
+                <li>3. 通路 (Channels)</li>
+                <li>4. 顧客關係 (Customer Relationships)</li>
+                <li>5. 收益流 (Revenue Streams)</li>
+                <li>6. 關鍵資源 (Key Resources)</li>
+                <li>7. 關鍵活動 (Key Activities)</li>
+                <li>8. 關鍵合作夥伴 (Key Partnerships)</li>
+                <li>9. 成本結構 (Cost Structure)</li>
             </ul>
-            <div id="feedback-msg" class="feedback"></div>
-        </div>
-    </main>
+        </section>
+
+        <section class="slide">
+            <h2>3. 畫布的左右腦邏輯</h2>
+            <p>BMC 可以劃分為兩部分，中間以「價值主張」為天平：</p>
+            <p>🧠 <strong style="color: #e74c3c;">右半部（前端市場）：</strong> 關注如何創造、傳遞「價值」給客人，並藉此賺錢。是生意的「心臟與靈魂」。</p>
+            <p>⚙️ <strong style="color: #16a085;">左半部（後端營運）：</strong> 關注為了實現價值，必須做出的準備、投入的資源與產生的成本。是生意的「引擎與底盤」。</p>
+        </section>
+
+        <section class="slide">
+            <h2>4. 【核心】價值主張 (VP)</h2>
+            <p><strong>Value Propositions：</strong> 你為客人解決了什麼問題？你滿足了什麼需求？</p>
+            <p>這<strong class="highlight">不是</strong>你的產品功能清單，而是客人憑什麼非買你的東西不可的「理由」。例如：</p>
+            <ul>
+                <li>新奇性（全球首創）</li>
+                <li>效能提升（更快速）</li>
+                <li>客製化（專為你設計）</li>
+                <li>設計/品牌地位（身份象徵）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>5. 【右腦】目標客群 (CS)</h2>
+            <p><strong>Customer Segments：</strong> 誰是你最重要的客人？你為誰創造價值？</p>
+            <p>企業不可能討好所有人，必須精準區隔市場。常見的區隔方式：</p>
+            <ul>
+                <li>大眾市場 (Mass Market)</li>
+                <li>利基市場 (Niche Market)</li>
+                <li>多元化市場（如：亞馬遜同時服務買家與賣家）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>6. 【右腦】通路 (CH)</h2>
+            <p><strong>Channels：</strong> 你的價值主張如何接觸並傳遞給客人？</p>
+            <p>通路包含溝通（廣告）、銷售（電商/實體店）與分銷（物流）。它必須覆蓋顧客旅程：</p>
+            <ul>
+                <li>知曉（客人怎麼看到我？）</li>
+                <li>評估（客人怎麼比較我？）</li>
+                <li>購買（客人怎麼下單？）</li>
+                <li>傳遞（客人怎麼拿到貨？）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>7. 【右腦】顧客關係 (CR)</h2>
+            <p><strong>Customer Relationships：</strong> 你希望與客人建立什麼樣的關係？</p>
+            <p>這決定了你的品牌調性與成本。例如：</p>
+            <ul>
+                <li>專人服務（尊榮、高成本）</li>
+                <li>自助服務（便宜、低接觸）</li>
+                <li>自動化服務（如 Netflix 的個性化推薦）</li>
+                <li>社群（讓客人間互助）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>8. 【右腦】收益流 (RS)</h2>
+            <p><strong>Revenue Streams：</strong> 錢從哪裡來？你是怎麼收費的？</p>
+            <p>收益流是企業存活的命脈。常見模式：</p>
+            <ul>
+                <li>資產銷售（賣斷產品）</li>
+                <li>使用費（算次/算時間）</li>
+                <li>訂閱費（月費/年費，如 SaaS）</li>
+                <li>租賃/授權費</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>9. 【左腦】關鍵資源 (KR) --></h2>
+            <p><strong>Key Resources：</strong> 為了實現價值主張，你必須擁有什麼資產？</p>
+            <p>資源可分為四大類：</p>
+            <ul>
+                <li>實體資源（廠房、設備、銷售網路）</li>
+                <li>知識資源（品牌、專利、版權、數據）</li>
+                <li>人力資源（科學家、設計師、工程師）</li>
+                <li>金融資源（現金流、信用額度）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>10. 【左腦】關鍵活動 (KA)</h2>
+            <p><strong>Key Activities：</strong> 為了讓商業模式運作，你每天必須做好什麼事？</p>
+            <p>這通常是公司的核心機能。例如：</p>
+            <ul>
+                <li>生產/製造（如：台積電）</li>
+                <li>問題解決/顧問服務（如：麥肯錫）</li>
+                <li>平台/網路維護（如：Google、Uber）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>11. 【左腦】關鍵合作夥伴 (KP)</h2>
+            <p><strong>Key Partnerships：</strong> 誰是你的盟友？誰能幫你做得更好、降低風險？</p>
+            <p>企業不可能什麼都自己來。合作類型包括：</p>
+            <ul>
+                <li>非競爭者間的戰略聯盟</li>
+                <li>同業競合 (Co-opetition)</li>
+                <li>上游供應商與下游分銷商關係</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>12. 【左腦】成本結構 (CS)</h2>
+            <p><strong>Cost Structure：</strong> 為了讓模式運作，你花了哪些錢？</p>
+            <p>成本必須被精算並優化。分為兩大導向：</p>
+            <ul>
+                <li><strong style="color: #c0392b;">成本導向 (Cost-driven)：</strong> 極力把成本壓到最低（如：廉價航空）。</li>
+                <li><strong style="color: #8e44ad;">價值導向 (Value-driven)：</strong> 關注價值創造，不吝投入成本（如：精品飯店）。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>13. BMC 的生命力在於「連動」</h2>
+            <p>BMC 不是 9 個獨立的格子，而是一個<strong class="highlight">連動的系統</strong>。</p>
+            <p>當你更改了「價值主張」（例如：從賣產品改成賣服務），你的「收益流」會變、「關鍵資源」會變、「成本結構」也會跟著變。</p>
+            <p>真正的書蟲，會利用 BMC 來對不同的商業假設進行「壓力測試 (Stress Testing)」。</p>
+        </section>
+
+        <section class="slide">
+            <h1>📝 期中綜合實戰大挑戰</h1>
+            <p style="font-size: 1.8em; text-align: center;">10 題實戰情境題，考驗你的 BMC 邏輯思維！</p>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q1. 共享單車</h2>
+            <p class="question">Q1: YouBike 共享單車提供了「隨處取車、隨處還車」的便利性，解決了都市人「最後一哩路」的交通痛點。在 BMC 畫布中，這屬於哪個區塊？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 通路 (Channels)</li>
+                <li data-status="correct">B. 價值主張 (Value Propositions)</li>
+                <li data-status="wrong">C. 關鍵資源 (Key Resources)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q2. 軟體服務</h2>
+            <p class="question">Q2: 許多 SaaS（軟體即服務）公司（如 Adobe、Microsoft 365）從傳統的「賣斷盒裝軟體」改成「每個月收取訂閱費」。這是在 BMC 中的哪個區塊進行了創新？</p>
+            <ul class="options">
+                <li data-status="correct">A. 收益流 (Revenue Streams)</li>
+                <li data-status="wrong">B. 顧客關係 (Customer Relationships)</li>
+                <li data-status="wrong">C. 關鍵活動 (Key Activities)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q3. 平台策略</h2>
+            <p class="question">Q3: Airbnb 本身並沒有擁有任何一間房間，他們的核心工作是「維護網站平台」並「媒合房東與房客」。對 Airbnb 而言，這屬於哪個區塊？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 關鍵資源 (Key Resources)</li>
+                <li data-status="correct">B. 關鍵活動 (Key Activities)</li>
+                <li data-status="wrong">C. 關鍵合作夥伴 (Key Partnerships)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q4. 品牌行銷</h2>
+            <p class="question">Q4: Coca-Cola 每年投入數十億美元在廣告行銷上，營造出「快樂、相聚」的品牌形象。這對於 Coca-Cola 來說，屬於哪個區塊？</p>
+            <ul class="options">
+                <li data-status="correct">A. 關鍵資源 (Key Resources - 品牌知識資產)</li>
+                <li data-status="wrong">B. 價值主張 (Value Propositions)</li>
+                <li data-status="wrong">C. 通路 (Channels)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q5. 物流外包</h2>
+            <p class="question">Q5: 某個中型電商網站為了降低營運複雜度，決定不自己建立車隊，而是全面將送貨業務委託給「黑貓宅急便」。黑貓宅急便在這個電商的 BMC 中是？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 通路 (Channels)</li>
+                <li data-status="correct">B. 關鍵合作夥伴 (Key Partnerships)</li>
+                <li data-status="wrong">C. 關鍵活動 (Key Activities)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q6. 精品飯店</h2>
+            <p class="question">Q6: 某間精品飯店主打「極致的客製化管家服務」，確保每位客人都能獲得尊榮體驗。為了維持這種高水準服務，飯店在 BMC 中最不可能採用哪種導向的成本結構？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 價值導向 (Value-driven)</li>
+                <li data-status="correct">B. 成本導向 (Cost-driven)</li>
+                <li data-status="wrong">C. 利潤導向 (Profit-driven)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q7. 利基市場</h2>
+            <p class="question">Q7: 某個專門販售「給專業電競選手使用的高端鍵盤」的品牌，在 BMC 中選擇了哪種目標客群？</p>
+            <ul class="options">
+                <li data-status="correct">A. 利基市場 (Niche Market)</li>
+                <li data-status="wrong">B. 大眾市場 (Mass Market)</li>
+                <li data-status="wrong">C. 多元化市場 (Diversified Market)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q8. 行動通訊 APP</h2>
+            <p class="question">Q8: 用戶可以直接在 LINE APP 上「即時通訊」、「購買貼圖」與「使用 LINE Pay 付款」。對 LINE 來說，LINE APP 這個載體屬於哪個區塊？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 關鍵資源 (Key Resources)</li>
+                <li data-status="correct">B. 通路 (Channels)</li>
+                <li data-status="wrong">C. 顧客關係 (Customer Relationships)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q9. 社群維繫</h2>
+            <p class="question">Q9: 小米手機建立了「米粉社群」，鼓勵用戶在論壇上分享使用心得、提出產品改進建議，並由資深用戶回答新用戶的問題。這在 BMC 中屬於？</p>
+            <ul class="options">
+                <li data-status="correct">A. 顧客關係 (Customer Relationships)</li>
+                <li data-status="wrong">B. 價值主張 (Value Propositions)</li>
+                <li data-status="wrong">C. 關鍵活動 (Key Activities)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q10. 刮鬍刀模式</h2>
+            <p class="question">Q10: 經典的吉列刮鬍刀模式：將刮鬍刀架賣得很便宜（虧本），但規定耗材（刀片）只能使用原廠且價格昂貴。這在 BMC 中是利用哪個區塊來支撐其「收益流」？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 價值主張 (Value Propositions)</li>
+                <li data-status="wrong">B. 目標客群 (Customer Segments)</li>
+                <li data-status="correct">C. 關鍵合作夥伴 (Key Partnerships)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide">
+            <h1>🎉 Congratulations!</h1>
+            <p style="font-size: 1.8em; text-align: center;">你已經成功解構了企業的賺錢引擎 (BMC)</p>
+            <p style="font-size: 1.1em; text-align: center; margin-top: 30px;">書蟲的旅程尚未結束，接下來我們將往更宏觀的世界探索。</p>
+            <div class="chapter-nav">
+                <a href="index.html" class="chapter-btn">⬅️ 回到第 1 章</a>
+                <a href="chapter3.html" class="chapter-btn next">前往第 3 章：總體環境分析 ➡️</a>
+            </div>
+        </section>
+
+    </div>
 
     <script>
-        function checkAnswer(element, status, message) {
-            let options = document.querySelectorAll('.options li');
-            options.forEach(opt => {
-                opt.style.backgroundColor = '#fff';
-                opt.style.borderColor = '#ccc';
+        // 1. 初始化幻燈片變數
+        const deck = document.getElementById('deck');
+        const slides = document.querySelectorAll('.slide');
+        const totalPagesSpan = document.getElementById('total-pages');
+        const currentPageSpan = document.getElementById('current-page');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+        totalPagesSpan.innerText = totalSlides;
+
+        // 2. 切換幻燈片函數
+        function moveSlide(direction) {
+            currentSlideIndex = currentSlideIndex + direction;
+
+            // 確保不會超出範圍
+            if (currentSlideIndex < 0) { currentSlideIndex = 0; }
+            if (currentSlideIndex >= totalSlides) { currentSlideIndex = totalSlides - 1; }
+
+            updateDeckView();
+        }
+
+        // 3. 更新畫面檢視
+        function updateDeckView() {
+            // 滑動容器
+            deck.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+            
+            // 更新 active 狀態（用於 opacity 動畫）
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
             });
 
-            let feedbackDiv = document.getElementById('feedback-msg');
-            feedbackDiv.style.display = 'block';
-            feedbackDiv.innerText = message;
-
-            if (status === 'correct') {
-                element.style.backgroundColor = '#d5f5e3';
-                element.style.borderColor = '#27ae60';
-                feedbackDiv.className = 'feedback correct';
-            } else {
-                element.style.backgroundColor = '#fadbd8';
-                element.style.borderColor = '#c0392b';
-                feedbackDiv.className = 'feedback wrong';
-            }
+            // 更新頁碼與按鈕狀態
+            currentPageSpan.innerText = currentSlideIndex + 1;
+            prevBtn.disabled = (currentSlideIndex === 0);
+            nextBtn.disabled = (currentSlideIndex === totalSlides - 1);
         }
+
+        // 4. 監聽鍵盤事件 (←/→)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { moveSlide(-1); }
+            if (e.key === 'ArrowRight') { moveSlide(1); }
+        });
+
+        // 5. 測驗互動邏輯
+        const quizSlides = document.querySelectorAll('.quiz-slide');
+        
+        quizSlides.forEach(slide => {
+            const options = slide.querySelectorAll('.options li');
+            const feedbackDiv = slide.querySelector('.feedback');
+
+            options.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    // 重置此題選項樣式
+                    options.forEach(o => { o.style.backgroundColor = '#f9f9f9'; o.style.borderColor = '#eee'; });
+
+                    const status = this.getAttribute('data-status');
+                    feedbackDiv.style.display = 'block';
+
+                    if (status === 'correct') {
+                        this.style.backgroundColor = '#d5f5e3';
+                        this.style.borderColor = '#27ae60';
+                        feedbackDiv.innerText = '完全正確！你對 BMC 的理解很深刻。';
+                        feedbackDiv.className = 'feedback correct';
+                    } else {
+                        this.style.backgroundColor = '#fadbd8';
+                        this.style.borderColor = '#c0392b';
+                        feedbackDiv.innerText = '答錯了喔。請再思考看看這個價值傳遞的本質是什麼。';
+                        feedbackDiv.className = 'feedback wrong';
+                    }
+                });
+            });
+        });
+
     </script>
 </body>
 </html>
