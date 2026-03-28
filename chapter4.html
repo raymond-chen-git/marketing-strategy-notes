@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行銷與商業模式 | 第4章：SWOT 與 TOWS 矩陣</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --slide-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        .deck-container { width: 100vw; height: 100vh; display: flex; transition: transform 0.5s ease-in-out; }
+        .slide { min-width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px; box-sizing: border-box; background-color: var(--slide-bg); opacity: 0; transition: opacity 0.3s ease; }
+        .slide.active { opacity: 1; }
+        .slide h1 { color: var(--primary-color); font-size: 3em; margin-bottom: 20px; text-align: center; }
+        .slide h2 { color: var(--accent-color); font-size: 2.2em; border-left: 8px solid var(--accent-color); padding-left: 20px; align-self: flex-start; margin-left: 10%; }
+        .slide p, .slide li { font-size: 1.4em; line-height: 1.6; max-width: 80%; text-align: justify; }
+        .slide ul { align-self: flex-start; margin-left: 15%; }
+        .highlight { background-color: #ffeaa7; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+        
+        .nav-btns { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+        .nav-btn { padding: 15px 25px; background-color: rgba(44, 62, 80, 0.8); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; font-weight: bold; transition: 0.3s; }
+        .nav-btn:hover { background-color: rgba(52, 152, 219, 1); }
+        .nav-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .page-counter { position: fixed; bottom: 30px; left: 30px; font-size: 1.2em; color: #7f8c8d; z-index: 100; }
+
+        .quiz-container { text-align: left; align-self: center !important; }
+        .options { list-style-type: none; padding: 0; width: 100%; margin: 20px 0;}
+        .options li { background-color: #f9f9f9; margin-bottom: 15px; padding: 15px; border-radius: 8px; cursor: pointer; border: 2px solid #eee; transition: 0.3s; font-size: 1.1em !important; }
+        .options li:hover { background-color: #eaf2f8; border-color: #3498db; }
+        .feedback { font-weight: bold; padding: 15px; border-radius: 8px; display: none; font-size: 1.2em; }
+        .correct { background-color: #d5f5e3; color: #27ae60; border: 2px solid #27ae60; }
+        .wrong { background-color: #fadbd8; color: #c0392b; border: 2px solid #c0392b; }
+        .chapter-nav { display: flex; gap: 20px; margin-top: 40px; }
+        .chapter-btn { display: inline-block; padding: 15px 30px; background-color: #95a5a6; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.2em; transition: 0.3s; }
+        .chapter-btn.next { background-color: var(--accent-color); }
+        .chapter-btn:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div class="page-counter"><span id="current-page">1</span> / <span id="total-pages"></span></div>
+
+    <div class="nav-btns">
+        <button class="nav-btn" id="prev-btn" onclick="moveSlide(-1)" disabled>⬅️ 上一頁</button>
+        <button class="nav-btn" id="next-btn" onclick="moveSlide(1)">下一頁 ➡️</button>
+    </div>
+
+    <div class="deck-container" id="deck">
+
+        <section class="slide active">
+            <h1>行銷與商業模式：從零到一</h1>
+            <p style="font-size: 1.8em; text-align: center;">第 4 章：企業自我診斷與策略抉擇</p>
+            <p style="font-size: 2.2em; color: var(--accent-color); font-weight: bold; text-align: center;">SWOT 分析與 TOWS 實戰矩陣</p>
+        </section>
+
+        <section class="slide">
+            <h2>1. SWOT 的內外之分</h2>
+            <p>SWOT 是最經典的企業自我診斷工具，它強制我們把資訊分成「內部」與「外部」兩個維度來檢視：</p>
+            <ul>
+                <li><strong style="color: #2980b9;">內部條件 (Internal)：</strong> 優勢 (Strengths) 與 劣勢 (Weaknesses)。這是你能控制的，通常來自於我們在第 2 章學過的 BMC（關鍵資源、關鍵活動）。</li>
+                <li><strong style="color: #c0392b;">外部環境 (External)：</strong> 機會 (Opportunities) 與 威脅 (Threats)。這是你無法控制的，來自於我們第 3 章學過的 PESTEL 與波特五力。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>2. 盤點內部：優勢與劣勢</h2>
+            <p><strong>優勢 (Strengths)：我們手上有什麼好牌？</strong></p>
+            <ul>
+                <li>別人沒有的專利、極低的生產成本、超強的品牌忠誠度、獨家綁定的供應商。</li>
+                <li>例如：花蓮在地手搖飲店擁有「與在地小農簽訂的獨家鮮乳供應契約」。</li>
+            </ul>
+            <p><strong>劣勢 (Weaknesses)：我們哪裡不如人？</strong></p>
+            <ul>
+                <li>資金短缺、品牌知名度低、技術落後、通路鋪貨率不足。</li>
+                <li>例如：這家花蓮手搖飲店「離開花蓮就沒有人認識，且缺乏建立連鎖加盟體系的 SOP 經驗」。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>3. 掃描外部：機會與威脅</h2>
+            <p><strong>機會 (Opportunities)：外面有什麼風口可以飛？</strong></p>
+            <ul>
+                <li>政府的新補助政策、競爭對手爆發公關危機、消費者新趨勢。</li>
+                <li>例如：觀光局推出「花東在地特色農產品推廣補助案」（PESTEL中的政治/經濟因素）。</li>
+            </ul>
+            <p><strong>威脅 (Threats)：外面有什麼怪獸會吃掉我們？</strong></p>
+            <ul>
+                <li>原物料大漲、法規變嚴格、國際連鎖巨頭進軍本地市場。</li>
+                <li>例如：全台最大的連鎖手搖飲品牌宣布今年將在花蓮市區連開 5 家直營店（波特五力中的潛在/現有競爭者威脅）。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>4. 傳統 SWOT 的致命傷</h2>
+            <p>很多經理人開會時，在白板上畫了四個格子，大家七嘴八舌填滿了 S、W、O、T，然後呢？</p>
+            <p><span class="highlight">然後就沒有然後了。</span></p>
+            <p>因為 SWOT 只是一份「現狀清單（Checklist）」，它指出了你的健康狀況，但<strong>沒有開處方箋給你</strong>。要找出具體的「行動戰略」，我們必須進入進階版的：<strong>TOWS 矩陣</strong>。</p>
+        </section>
+
+        <section class="slide">
+            <h2>5. 策略提煉：TOWS 矩陣</h2>
+            <p>TOWS 矩陣是把 SWOT 的項目拿來進行「十字交叉匹配（Cross-Matching）」。把內部的優劣勢去碰撞外部的機會與威脅，從而得出四種具體的戰略方向：</p>
+            <ul>
+                <li><strong>SO 戰略 (增長型)：</strong> 使用優勢，抓住機會。</li>
+                <li><strong>ST 戰略 (多元型)：</strong> 使用優勢，規避威脅。</li>
+                <li><strong>WO 戰略 (扭轉型)：</strong> 克服劣勢，抓住機會。</li>
+                <li><strong>WT 戰略 (防禦型)：</strong> 減少劣勢，避免威脅。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>6. SO 戰略：乘風破浪 (Maxi-Maxi)</h2>
+            <p><strong>邏輯：極大化優勢 ＋ 極大化機會。</strong> 這是所有企業最想執行的「順風局」戰略。</p>
+            <p><strong>花蓮飲料店實戰：</strong></p>
+            <ul>
+                <li>優勢 (S)：獨家小農鮮乳供應。</li>
+                <li>機會 (O)：政府推廣在地農特產補助。</li>
+                <li><strong class="highlight">SO 具體行動：</strong> 聯合小農向政府申請補助專案，在火車站舉辦「花蓮農產鮮乳節」大型快閃活動，擴大市占率。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>7. ST 戰略：以長制短 (Maxi-Mini)</h2>
+            <p><strong>邏輯：極大化優勢 ＋ 極小化威脅。</strong> 外部有危險，但我們用手中的王牌來防禦。</p>
+            <p><strong>花蓮飲料店實戰：</strong></p>
+            <ul>
+                <li>優勢 (S)：極高的在地社群連結與人情味。</li>
+                <li>威脅 (T)：大型連鎖品牌大舉入侵花蓮。</li>
+                <li><strong class="highlight">ST 具體行動：</strong> 舉辦「花蓮人挺在地小農」的長期熟客會員計畫，利用深厚的在地情感綁定消費者，建立大型連鎖店無法複製的情感護城河。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>8. WO 戰略：借力使力 (Mini-Maxi)</h2>
+            <p><strong>邏輯：極小化劣勢 ＋ 極大化機會。</strong> 我們有弱點，但剛好外部有機會可以幫我們補足。</p>
+            <p><strong>花蓮飲料店實戰：</strong></p>
+            <ul>
+                <li>劣勢 (W)：缺乏連鎖化與數位點餐的系統經驗。</li>
+                <li>機會 (O)：疫後數位轉型補助案及市面上 SaaS 點餐系統成熟。</li>
+                <li><strong class="highlight">WO 具體行動：</strong> 趁機申請數位轉型補助，直接採購成熟的第三方 iPad 點餐與會員系統（SaaS），用外部資源快速彌補自身技術落後的劣勢。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>9. WT 戰略：斷尾求生 (Mini-Mini)</h2>
+            <p><strong>邏輯：極小化劣勢 ＋ 極小化威脅。</strong> 最慘的「逆風局」，內部很弱、外部又險惡，目標是「活下去」。</p>
+            <p><strong>花蓮飲料店實戰：</strong></p>
+            <ul>
+                <li>劣勢 (W)：離開花蓮沒有知名度。</li>
+                <li>威脅 (T)：外縣市房租與人力成本暴漲。</li>
+                <li><strong class="highlight">WT 具體行動：</strong> 取消原本要在台北開實體分店的擴張計畫（避免威脅與劣勢擴大），改以「技術授權」或「只賣聯名小農茶包」的方式，退守輕資產營運。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h1>📝 第四章 綜合實戰測驗</h1>
+            <p style="font-size: 1.8em; text-align: center;">10 題情境題，考驗你的戰略交叉匹配能力！</p>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q1. 內外部判定</h2>
+            <p class="question">Q1: 對一家手機製造商而言，「歐盟強制要求所有電子產品必須統一使用 Type-C 充電孔」，這在 SWOT 中屬於？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 劣勢 (Weaknesses)</li>
+                <li data-status="correct">B. 威脅 或 機會 (取決於廠商原本的規格，但絕對是外部的 T 或 O)</li>
+                <li data-status="wrong">C. 優勢 (Strengths)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q2. 內外部判定</h2>
+            <p class="question">Q2: 「我們的工程師團隊擁有全亞洲最頂尖的 AI 語音辨識專利技術」，這屬於 SWOT 中的？</p>
+            <ul class="options">
+                <li data-status="correct">A. 優勢 (Strengths)</li>
+                <li data-status="wrong">B. 機會 (Opportunities)</li>
+                <li data-status="wrong">C. 威脅 (Threats)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q3. TOWS 戰略判斷</h2>
+            <p class="question">Q3: 老牌底片相機公司發現「底片需求銳減 (T)」，但他們擁有「極高的光學鏡頭製造技術 (S)」。因此他們決定轉型，將鏡頭賣給醫療器材與半導體設備商。這屬於哪一種戰略？</p>
+            <ul class="options">
+                <li data-status="wrong">A. SO 戰略 (乘風破浪)</li>
+                <li data-status="correct">B. ST 戰略 (以長制短，用內部優勢規避外部威脅)</li>
+                <li data-status="wrong">C. WT 戰略 (斷尾求生)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q4. TOWS 戰略判斷</h2>
+            <p class="question">Q4: 某新創英語補習班「知名度低、師資不足 (W)」，但看到「AI 虛擬人技術爆發與遠距教學法規鬆綁 (O)」。他們決定直接引進 AI 虛擬老師來開課。這是？</p>
+            <ul class="options">
+                <li data-status="correct">A. WO 戰略 (借力使力，用外部機會彌補內部劣勢)</li>
+                <li data-status="wrong">B. WT 戰略 (斷尾求生)</li>
+                <li data-status="wrong">C. SO 戰略 (乘風破浪)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q5. TOWS 戰略判斷</h2>
+            <p class="question">Q5: 台灣某電子代工廠發現「中美貿易戰導致關稅壁壘 (T)」，同時自己「對美國市場的依賴度過高且缺乏品牌力 (W)」。他們決定關閉部分產線，並裁撤美國業務部。這是？</p>
+            <ul class="options">
+                <li data-status="wrong">A. ST 戰略</li>
+                <li data-status="correct">B. WT 戰略 (防禦型，縮編以減少劣勢與威脅帶來的損害)</li>
+                <li data-status="wrong">C. WO 戰略</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q6. 觀念釐清</h2>
+            <p class="question">Q6: 下列關於 SWOT 與 TOWS 的關係，何者敘述正確？</p>
+            <ul class="options">
+                <li data-status="wrong">A. SWOT 負責提出解決方案，TOWS 負責列出現狀清單。</li>
+                <li data-status="correct">B. SWOT 只是現狀的靜態盤點，TOWS 則是動態的戰略行動配對。</li>
+                <li data-status="wrong">C. 兩者是完全獨立的工具，必須分開使用。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q7. TOWS 戰略判斷</h2>
+            <p class="question">Q7: 某網路女裝品牌擁有「百萬死忠粉絲 (S)」，剛好遇到「雙11購物節與振興券發放 (O)」。行銷總監決定投入年度最高預算，推出粉絲專屬的振興券翻倍活動。這是？</p>
+            <ul class="options">
+                <li data-status="correct">A. SO 戰略 (極大化優勢與機會的順風局)</li>
+                <li data-status="wrong">B. ST 戰略</li>
+                <li data-status="wrong">C. WO 戰略</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q8. 劣勢轉化</h2>
+            <p class="question">Q8: 某在地餐廳「沒有專屬停車場 (W)」，但發現旁邊開了一家「大型連鎖超市，且附設大型收費停車場 (O)」。餐廳老闆主動去跟超市談特約合作：憑餐廳發票可免費停超市。這屬於？</p>
+            <ul class="options">
+                <li data-status="wrong">A. SO 戰略</li>
+                <li data-status="wrong">B. WT 戰略</li>
+                <li data-status="correct">C. WO 戰略 (借用外部機會來彌補自身硬體劣勢)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q9. 分析工具串聯</h2>
+            <p class="question">Q9: 身為企業顧問，你通常會去哪裡尋找資料來填寫 SWOT 中的「O (機會)」與「T (威脅)」？</p>
+            <ul class="options">
+                <li data-status="correct">A. 來自 PESTEL 分析（總體環境）與波特五力（產業競爭）的結果。</li>
+                <li data-status="wrong">B. 來自公司的資產負債表與員工績效考核表。</li>
+                <li data-status="wrong">C. 來自商業模式畫布 (BMC) 中的「成本結構」。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q10. 分析工具串聯</h2>
+            <p class="question">Q10: 承上題，那你通常會去哪裡盤點出 SWOT 中的「S (優勢)」與「W (劣勢)」？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 分析競爭對手的新產品發表會。</li>
+                <li data-status="wrong">B. 分析政府剛頒布的勞工法規。</li>
+                <li data-status="correct">C. 檢視公司自身的商業模式 (BMC)，盤點我們的「關鍵資源」與「關鍵活動」是否具備稀缺性。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide">
+            <h1>🎉 恭喜完成 Module I</h1>
+            <p style="font-size: 1.8em; text-align: center;">你已經精通了企業策略的「大局觀」與「自我診斷」</p>
+            <p style="font-size: 1.1em; text-align: center; margin-top: 30px;">至此，戰略基礎已經打穩。<br>下一章，我們將正式進入 Module II：產品組合與市場突圍的行銷戰略！</p>
+            <div class="chapter-nav">
+                <a href="chapter3.html" class="chapter-btn">⬅️ 回到第 3 章</a>
+                <a href="chapter5.html" class="chapter-btn next">前往第 5 章：BCG 與安索夫矩陣 ➡️</a>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // 核心輪播與測驗邏輯 (不需變動)
+        const deck = document.getElementById('deck');
+        const slides = document.querySelectorAll('.slide');
+        const totalPagesSpan = document.getElementById('total-pages');
+        const currentPageSpan = document.getElementById('current-page');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+        totalPagesSpan.innerText = totalSlides;
+
+        function moveSlide(direction) {
+            currentSlideIndex = currentSlideIndex + direction;
+            if (currentSlideIndex < 0) { currentSlideIndex = 0; }
+            if (currentSlideIndex >= totalSlides) { currentSlideIndex = totalSlides - 1; }
+            updateDeckView();
+        }
+
+        function updateDeckView() {
+            deck.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) { slide.classList.add('active'); } 
+                else { slide.classList.remove('active'); }
+            });
+            currentPageSpan.innerText = currentSlideIndex + 1;
+            prevBtn.disabled = (currentSlideIndex === 0);
+            nextBtn.disabled = (currentSlideIndex === totalSlides - 1);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { moveSlide(-1); }
+            if (e.key === 'ArrowRight') { moveSlide(1); }
+        });
+
+        const quizSlides = document.querySelectorAll('.quiz-slide');
+        quizSlides.forEach(slide => {
+            const options = slide.querySelectorAll('.options li');
+            const feedbackDiv = slide.querySelector('.feedback');
+
+            options.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    options.forEach(o => { o.style.backgroundColor = '#f9f9f9'; o.style.borderColor = '#eee'; });
+                    const status = this.getAttribute('data-status');
+                    feedbackDiv.style.display = 'block';
+
+                    if (status === 'correct') {
+                        this.style.backgroundColor = '#d5f5e3';
+                        this.style.borderColor = '#27ae60';
+                        feedbackDiv.innerText = '判斷精準！完全正確。';
+                        feedbackDiv.className = 'feedback correct';
+                    } else {
+                        this.style.backgroundColor = '#fadbd8';
+                        this.style.borderColor = '#c0392b';
+                        feedbackDiv.innerText = '邏輯有些偏差，請再次思考這個力量的本質。';
+                        feedbackDiv.className = 'feedback wrong';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
