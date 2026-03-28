@@ -3,142 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>行銷與商業模式學習講義 | 第1章</title>
+    <title>行銷與商業模式 | 第1章：宏觀視角簡報模式</title>
     <style>
-        body {
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --slide-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            line-height: 1.8;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
         }
-        header {
-            text-align: center;
-            padding: 30px 0;
-            border-bottom: 2px solid #2c3e50;
-            margin-bottom: 30px;
+
+        .deck-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            transition: transform 0.5s ease-in-out;
         }
-        h1 { color: #2c3e50; font-size: 2.2em; margin-bottom: 10px; }
-        h2 { color: #34495e; border-left: 5px solid #3498db; padding-left: 15px; margin-top: 40px; }
-        h3 { color: #2980b9; }
-        p { font-size: 1.1em; margin-bottom: 20px; }
-        .highlight { background-color: #ffeaa7; padding: 2px 5px; border-radius: 3px; }
-        .box {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            box-sizing: border-box;
+            background-color: var(--slide-bg);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        /* 測驗區塊樣式 */
-        .quiz-container {
-            background-color: #e8f6f3;
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid #1abc9c;
-            margin-top: 40px;
-        }
-        .question { font-weight: bold; font-size: 1.2em; margin-bottom: 15px; }
-        .options { list-style-type: none; padding: 0; }
-        .options li {
-            background-color: #fff;
-            margin-bottom: 10px;
-            padding: 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            transition: 0.3s;
-        }
-        .options li:hover { background-color: #d1f2eb; border-color: #1abc9c; }
-        .feedback {
-            margin-top: 15px;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
-        .correct { background-color: #d5f5e3; color: #27ae60; border: 1px solid #27ae60; }
-        .wrong { background-color: #fadbd8; color: #c0392b; border: 1px solid #c0392b; }
+
+        .slide.active { opacity: 1; }
+
+        .slide h1 { color: var(--primary-color); font-size: 3em; margin-bottom: 20px; text-align: center; }
+        .slide h2 { color: var(--accent-color); font-size: 2.2em; border-left: 8px solid var(--accent-color); padding-left: 20px; align-self: flex-start; margin-left: 10%; }
+        .slide p, .slide li { font-size: 1.4em; line-height: 1.6; max-width: 80%; text-align: justify; }
+        .slide ul { align-self: flex-start; margin-left: 15%; }
+        .highlight { background-color: #ffeaa7; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+
+        .nav-btns { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+        .nav-btn { padding: 15px 25px; background-color: rgba(44, 62, 80, 0.8); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; font-weight: bold; transition: 0.3s; }
+        .nav-btn:hover { background-color: rgba(52, 152, 219, 1); }
+        .nav-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .page-counter { position: fixed; bottom: 30px; left: 30px; font-size: 1.2em; color: #7f8c8d; z-index: 100; }
+
+        .quiz-container { text-align: left; align-self: center !important; }
+        .options { list-style-type: none; padding: 0; width: 100%; margin: 20px 0;}
+        .options li { background-color: #f9f9f9; margin-bottom: 15px; padding: 15px; border-radius: 8px; cursor: pointer; border: 2px solid #eee; transition: 0.3s; font-size: 1.1em !important; }
+        .options li:hover { background-color: #eaf2f8; border-color: #3498db; }
+        .feedback { font-weight: bold; padding: 15px; border-radius: 8px; display: none; font-size: 1.2em; }
+        .correct { background-color: #d5f5e3; color: #27ae60; border: 2px solid #27ae60; }
+        .wrong { background-color: #fadbd8; color: #c0392b; border: 2px solid #c0392b; }
+
+        .chapter-nav { display: flex; gap: 20px; margin-top: 40px; }
+        .chapter-btn { display: inline-block; padding: 15px 30px; background-color: #95a5a6; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 1.2em; transition: 0.3s; }
+        .chapter-btn.next { background-color: var(--accent-color); }
+        .chapter-btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>行銷與商業模式：從零到一</h1>
-        <p>第 1 章：企業管理的宏觀視角與商業模式</p>
-    </header>
+    <div class="page-counter"><span id="current-page">1</span> / <span id="total-pages"></span></div>
 
-    <main>
-        <div class="box">
-            <h2>1. 企業運作的五大齒輪：產、銷、人、發、財</h2>
-            <p>要了解商業模式與行銷，我們必須先從「企業管理」的全貌看起。一間公司要能順利運轉，傳統商管學界將其拆解為五大核心機能，簡稱<span class="highlight">「產銷人發財」</span>：</p>
+    <div class="nav-btns">
+        <button class="nav-btn" id="prev-btn" onclick="moveSlide(-1)" disabled>⬅️ 上一頁</button>
+        <button class="nav-btn" id="next-btn" onclick="moveSlide(1)">下一頁 ➡️</button>
+    </div>
+
+    <div class="deck-container" id="deck">
+
+        <section class="slide active">
+            <h1>行銷與商業模式：從零到一</h1>
+            <p style="font-size: 1.8em; text-align: center;">第 1 章：企業管理的宏觀視角</p>
+            <p style="font-size: 2.2em; color: var(--accent-color); font-weight: bold; text-align: center;">產銷人發財與商業邏輯</p>
+            <p style="font-size: 1.1em; color: #7f8c8d; text-align: center; margin-top: 50px;">(可使用鍵盤 ← / → 鍵切換幻燈片)</p>
+        </section>
+
+        <section class="slide">
+            <h2>1. 企業運作的五大齒輪</h2>
+            <p>要了解商業模式與行銷，必須先建立「大局觀」。</p>
+            <p>一間公司就像一台複雜的機器，傳統商管學界將其運作拆解為五大核心機能，簡稱 <span class="highlight">「產、銷、人、發、財」</span>。</p>
+            <p>這五個機能環環相扣，任何一個齒輪崩壞，企業機器就會停止運轉。</p>
+        </section>
+
+        <section class="slide">
+            <h2>2. 產 (Production / Operations)</h2>
+            <p><strong>生產與營運管理：</strong> 負責將「輸入（原料、資訊）」轉換為「輸出（產品、服務）」的過程。</p>
             <ul>
-                <li><strong>產 (Production / Operations)：</strong> 生產與營運。如何有效率地把產品製造出來，或把服務提供給客人。</li>
-                <li><strong>銷 (Sales / Marketing)：</strong> 行銷與業務。如何找出市場需求，並把產品賣出去換取收入。<strong>（這就是我們後續的重點）</strong></li>
-                <li><strong>人 (Human Resources)：</strong> 人力資源。招募、訓練、留住優秀的員工來幫公司做事。</li>
-                <li><strong>發 (Research & Development, R&D)：</strong> 研發。開發新產品、新技術，確保公司未來有競爭力。</li>
-                <li><strong>財 (Finance)：</strong> 財務。找錢（融資）與管錢（投資與控管現金流），確保公司不會黑字倒閉。</li>
+                <li>核心考驗：如何提高良率？如何降低單位成本？</li>
+                <li>實務情境：工廠的產線管理、餐廳的廚房出餐流程、電商的倉儲物流系統。</li>
             </ul>
-            <p>這五個機能是互相連動的。行銷（銷）部門如果賣得太好，生產（產）部門做不出來也是白搭；如果研發（發）出了很棒的產品，但財務（財）沒算好成本，賣一個虧一個，公司一樣會倒。</p>
-        </div>
+        </section>
 
-        <div class="box">
-            <h2>2. 商業模式 (Business Model) 到底是什麼？</h2>
-            <p>雖然「產銷人發財」解釋了公司有哪些部門，但它沒有解釋這家公司是「靠什麼賺錢的」。這就是**商業模式**要回答的問題。</p>
-            <p>簡單來說，商業模式就是企業的<span class="highlight">「價值創造與獲利邏輯」</span>。它必須回答三個核心問題：</p>
-            <ol>
-                <li><strong>價值創造 (Value Creation)：</strong> 你為誰解決了什麼痛點？（例如：Uber 解決了叫車難的問題）。</li>
-                <li><strong>價值傳遞 (Value Delivery)：</strong> 你如何把這個解決方案送到客人手上？（透過 APP 媒合司機與乘客）。</li>
-                <li><strong>價值獲取 (Value Capture)：</strong> 你怎麼收費？成本在哪？能賺錢嗎？（向司機抽成，省下買車與養司機的固定成本）。</li>
-            </ol>
-            <p><strong>區分「商業模式」與「行銷」：</strong><br>
-            商業模式是底層結構（這盤生意怎麼賺錢），行銷是表層手段（怎麼讓客人知道並買單）。如果商業模式是錯的（例如：賣 100 元的便當，食材加人工成本要 110 元），那行銷做得再好、賣得再多，公司只會倒得越快。</p>
-        </div>
+        <section class="slide">
+            <h2>3. 銷 (Sales / Marketing)</h2>
+            <p><strong>行銷與業務：</strong> 負責找出市場需求，並將產品變現。</p>
+            <ul>
+                <li>核心考驗：產品要賣給誰？怎麼定價？如何說服客人掏錢？</li>
+                <li>這正是我們這份講義後續的重點領域，它包含了你剛提到的 4P、4C、STP 等戰略模型。</li>
+            </ul>
+        </section>
 
-        <div class="quiz-container">
-            <h3>📝 第一章：隨堂知識測驗</h3>
-            <p class="question">情境題：知名印表機品牌通常會將「印表機主機」賣得非常便宜（甚至虧本），但規定消費者未來必須不斷購買該品牌原廠的高價「墨水匣」。請問，這種「硬體便宜、耗材昂貴」的策略，最適合歸類在哪個範疇？</p>
+        <section class="slide">
+            <h2>4. 人 (Human Resources)</h2>
+            <p><strong>人力資源管理：</strong> 負責企業內部「人」的選、用、育、留。</p>
+            <ul>
+                <li>核心考驗：如何招募對的人？如何設計 KPI 與獎金制度？如何建立企業文化？</li>
+                <li>沒有對的人，再好的商業模式也只是紙上談兵。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>5. 發 (Research & Development)</h2>
+            <p><strong>研究與發展：</strong> 負責探索未知，為企業建立未來的競爭壁壘。</p>
+            <ul>
+                <li>核心考驗：未來的技術趨勢是什麼？如何開發出競爭對手無法輕易複製的專利或新產品？</li>
+                <li>實務情境：台積電的先進製程研發、藥廠的新藥開發、軟體公司的 AI 演算法。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>6. 財 (Finance)</h2>
+            <p><strong>財務管理：</strong> 企業的血液循環系統，負責找錢與管錢。</p>
+            <ul>
+                <li>核心考驗：公司要不要向銀行借錢？要不要發行股票？現有的現金流撐得過下個月嗎？</li>
+                <li>獲利不等於有錢。很多公司有賺錢（帳面利潤），但卻因為收不到貨款（現金流斷裂）而「黑字倒閉」。</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>7. 為什麼懂「產銷人發財」還不夠？</h2>
+            <p>這五個機能定義了「部門在做什麼事」，但沒有回答一個最致命的問題：<strong style="color: #c0392b;">「這家公司到底靠什麼賺錢？」</strong></p>
+            <p>舉例：Google 有產銷人發財，傳統報社也有產銷人發財，但它們賺錢的底層邏輯完全不同。這就引出了下一個關鍵概念：<span class="highlight">商業模式 (Business Model)</span>。</p>
+        </section>
+
+        <section class="slide">
+            <h2>8. 什麼是商業模式？</h2>
+            <p>商業模式是企業的「價值創造與獲利邏輯」，它探討三個核心本體：</p>
+            <ul>
+                <li><strong>價值創造 (Value Creation)：</strong> 你為社會/顧客解決了什麼痛點？</li>
+                <li><strong>價值傳遞 (Value Delivery)：</strong> 你如何把這個解決方案送到顧客手上？</li>
+                <li><strong>價值獲取 (Value Capture)：</strong> 你如何從中截取利潤？（向誰收錢？怎麼收？）</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>9. 商業模式 vs. 行銷學</h2>
+            <p>用最直白的方式區分兩者：</p>
+            <p>⚙️ <strong>商業模式是「引擎」：</strong> 決定這盤生意怎麼賺錢。例如「印表機賣很便宜，靠賣昂貴的墨水匣賺錢」。</p>
+            <p>📢 <strong>行銷是「方向盤與烤漆」：</strong> 決定怎麼讓客人喜歡並買單。例如「拍一支感人的廣告，告訴消費者這台印表機印出來的家庭照片有多清晰」。</p>
+            <p>如果商業模式錯了（引擎壞了），行銷做得越好，公司死得越快（因為賣越多虧越多）。</p>
+        </section>
+
+        <section class="slide">
+            <h1>📝 第一章 綜合實戰測驗</h1>
+            <p style="font-size: 1.8em; text-align: center;">10 題情境題，檢驗你的企業管理大局觀！</p>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q1. 部門機能判定</h2>
+            <p class="question">Q1: 特斯拉 (Tesla) 在上海建立超級工廠，導入高度自動化的機器手臂，大幅縮短了每一台 Model 3 的組裝時間與瑕疵率。這屬於「產銷人發財」的哪一個領域？</p>
             <ul class="options">
-                <li onclick="checkAnswer(this, 'wrong', '不完全正確。雖然這涉及定價策略，但這更偏向公司整體的底層賺錢邏輯，而不僅僅是推廣手段。')">A. 行銷學中的推廣策略 (Promotion)</li>
-                <li onclick="checkAnswer(this, 'correct', '完全正確！這被稱為「刮鬍刀與刀片模式」，是一種經典的「商業模式 (Business Model)」，它決定了企業的核心利潤來源是耗材而非主機。')">B. 企業的商業模式 (Business Model) 的獲利邏輯</li>
-                <li onclick="checkAnswer(this, 'wrong', '不正確。人力資源管理探討的是員工招募與績效，與印表機耗材定價無關。')">C. 企業管理中的「人」 (Human Resources)</li>
+                <li data-status="correct">A. 產 (生產與營運)</li>
+                <li data-status="wrong">B. 發 (研究與發展)</li>
+                <li data-status="wrong">C. 人 (人力資源)</li>
             </ul>
-            <div id="feedback-msg" class="feedback"></div>
-        </div>
-        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
-            <a href="chapter2.html" style="display: inline-block; padding: 12px 24px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s;">
-                前往第 2 章：商業模式畫布 (BMC) ➡️
-            </a>
-        </div>
-    </main>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q2. 部門機能判定</h2>
+            <p class="question">Q2: 蘋果公司 (Apple) 決定今年秋天將 iPhone 16 Pro 的售價調高 100 美元，並主打「鈦金屬材質」作為廣告宣傳主軸。這主要屬於哪個領域的決策？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 財 (財務管理)</li>
+                <li data-status="correct">B. 銷 (行銷與業務)</li>
+                <li data-status="wrong">C. 產 (生產與營運)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q3. 資金的學問</h2>
+            <p class="question">Q3: 一家新創公司雖然產品大賣，但因為客戶都要求開「90天後兌現的支票」，導致公司發不出下個月的員工薪水而面臨倒閉危機。這是哪個機能出了嚴重問題？</p>
+            <ul class="options">
+                <li data-status="correct">A. 財 (財務管理中的現金流控管)</li>
+                <li data-status="wrong">B. 銷 (行銷與業務)</li>
+                <li data-status="wrong">C. 人 (人力資源管理)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q4. 護城河的建立</h2>
+            <p class="question">Q4: 為了不讓對手抄襲，某科技公司投入了大量資金，花了三年時間寫出一套極度複雜的 AI 圖片生成演算法，並申請了專利。這是哪個機能的展現？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 產 (生產與營運)</li>
+                <li data-status="correct">B. 發 (研究與發展)</li>
+                <li data-status="wrong">C. 銷 (行銷與業務)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q5. 企業文化</h2>
+            <p class="question">Q5: Google 以提供免費高檔吃到飽員工餐廳、按摩室與彈性上下班時間聞名，藉此吸引全球頂尖工程師加入。這屬於哪個機能的策略？</p>
+            <ul class="options">
+                <li data-status="correct">A. 人 (人力資源 - 招募與留才)</li>
+                <li data-status="wrong">B. 銷 (行銷 - 品牌公關)</li>
+                <li data-status="wrong">C. 財 (財務 - 資金運用)</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q6. 商業模式判別</h2>
+            <p class="question">Q6: 傳統的防毒軟體是「賣光碟收一次性費用」，現在大多數改成「免費下載基本版，進階殺毒功能每月收費（Freemium）」。這個轉變最精確的描述是？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 改變了公司的生產流程</li>
+                <li data-status="correct">B. 改變了公司的商業模式（價值獲取方式）</li>
+                <li data-status="wrong">C. 改變了公司的公關危機處理</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q7. 行銷 vs 商模</h2>
+            <p class="question">Q7: 承上題，如果防毒軟體公司決定找一位知名網紅來拍 YouTube 影片，教大家怎麼預防電腦中毒，並順便推薦自家的免費版軟體。這屬於什麼行為？</p>
+            <ul class="options">
+                <li data-status="correct">A. 行銷手段（推廣與溝通）</li>
+                <li data-status="wrong">B. 更改商業模式（價值獲取）</li>
+                <li data-status="wrong">C. 研發升級（研究與發展）</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q8. 價值創造</h2>
+            <p class="question">Q8: 商業模式三大核心中，「價值創造 (Value Creation)」探討的是什麼？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 產品的定價要比成本高多少才能賺錢。</li>
+                <li data-status="correct">B. 企業究竟為社會或目標顧客解決了什麼痛點或提供了什麼利益。</li>
+                <li data-status="wrong">C. 產品要透過超商還是網購送到顧客手上。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q9. 價值的連動</h2>
+            <p class="question">Q9: Netflix 提供「在家無限制觀看海量影集」，解決了人們要去百視達租還DVD的麻煩。這段敘述主要描寫了商業模式中的哪兩個概念？</p>
+            <ul class="options">
+                <li data-status="correct">A. 價值創造（無限制觀看）與 價值傳遞（在家串流）</li>
+                <li data-status="wrong">B. 價值獲取（收費方式）與 組織人資管理</li>
+                <li data-status="wrong">C. 財務融資 與 生產線效率</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide quiz-slide">
+            <h2>Q10. 綜合邏輯</h2>
+            <p class="question">Q10: 一家企業如果擁有頂尖的「發（研發）」技術，但缺乏好的「商業模式」，最可能導致什麼結果？</p>
+            <ul class="options">
+                <li data-status="wrong">A. 公司會立刻因為缺錢而黑字倒閉。</li>
+                <li data-status="correct">B. 可能開發出很棒的高科技產品，但卻找不到能為公司帶來穩定獲利的收費邏輯而走向失敗。</li>
+                <li data-status="wrong">C. 員工會集體離職抗議。</li>
+            </ul>
+            <div class="feedback"></div>
+        </section>
+
+        <section class="slide">
+            <h1>🎉 第一章 通關！</h1>
+            <p style="font-size: 1.8em; text-align: center;">你已經具備了企業整體的宏觀視角</p>
+            <p style="font-size: 1.1em; text-align: center; margin-top: 30px;">接下來，我們將進一步把商業模式展開成一張「畫布」。</p>
+            <div class="chapter-nav">
+                <a href="chapter2.html" class="chapter-btn next">前往第 2 章：拆解賺錢引擎 (BMC) ➡️</a>
+            </div>
+        </section>
+
+    </div>
 
     <script>
-        function checkAnswer(element, status, message) {
-            // 重置所有選項的背景色
-            let options = document.querySelectorAll('.options li');
-            options.forEach(opt => {
-                opt.style.backgroundColor = '#fff';
-                opt.style.borderColor = '#ccc';
-            });
+        const deck = document.getElementById('deck');
+        const slides = document.querySelectorAll('.slide');
+        const totalPagesSpan = document.getElementById('total-pages');
+        const currentPageSpan = document.getElementById('current-page');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+        totalPagesSpan.innerText = totalSlides;
 
-            // 顯示反饋訊息
-            let feedbackDiv = document.getElementById('feedback-msg');
-            feedbackDiv.style.display = 'block';
-            feedbackDiv.innerText = message;
-
-            // 根據對錯給予顏色與樣式
-            if (status === 'correct') {
-                element.style.backgroundColor = '#d5f5e3';
-                element.style.borderColor = '#27ae60';
-                feedbackDiv.className = 'feedback correct';
-            } else {
-                element.style.backgroundColor = '#fadbd8';
-                element.style.borderColor = '#c0392b';
-                feedbackDiv.className = 'feedback wrong';
-            }
+        function moveSlide(direction) {
+            currentSlideIndex = currentSlideIndex + direction;
+            if (currentSlideIndex < 0) { currentSlideIndex = 0; }
+            if (currentSlideIndex >= totalSlides) { currentSlideIndex = totalSlides - 1; }
+            updateDeckView();
         }
+
+        function updateDeckView() {
+            deck.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentPageSpan.innerText = currentSlideIndex + 1;
+            prevBtn.disabled = (currentSlideIndex === 0);
+            nextBtn.disabled = (currentSlideIndex === totalSlides - 1);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { moveSlide(-1); }
+            if (e.key === 'ArrowRight') { moveSlide(1); }
+        });
+
+        const quizSlides = document.querySelectorAll('.quiz-slide');
+        quizSlides.forEach(slide => {
+            const options = slide.querySelectorAll('.options li');
+            const feedbackDiv = slide.querySelector('.feedback');
+
+            options.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    options.forEach(o => { o.style.backgroundColor = '#f9f9f9'; o.style.borderColor = '#eee'; });
+                    const status = this.getAttribute('data-status');
+                    feedbackDiv.style.display = 'block';
+
+                    if (status === 'correct') {
+                        this.style.backgroundColor = '#d5f5e3';
+                        this.style.borderColor = '#27ae60';
+                        feedbackDiv.innerText = '完全正確！觀念非常清晰。';
+                        feedbackDiv.className = 'feedback correct';
+                    } else {
+                        this.style.backgroundColor = '#fadbd8';
+                        this.style.borderColor = '#c0392b';
+                        feedbackDiv.innerText = '答錯了喔。請重新回想各部門的核心定義。';
+                        feedbackDiv.className = 'feedback wrong';
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
