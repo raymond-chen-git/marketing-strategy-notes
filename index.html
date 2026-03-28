@@ -82,6 +82,7 @@
     <div class="fixed-chapter-nav">
         <a href="index.html">🏠 回首頁目錄</a>
         <a href="chapter2.html">下一章 (第2章) ⏭️</a>
+        <a href="#" onclick="jumpToQuizStart(); return false;" style="background-color: #d19a66; color: #121212; border-color: #d19a66;">⏩ 直接跳至測驗</a>
     </div>
 
     <button id="return-quiz-btn" onclick="returnToQuiz()">🔙 結束複習，回到測驗</button>
@@ -157,11 +158,11 @@
             <p>📢 <strong style="color: #e5c07b;">行銷是「方向盤與烤漆」：</strong> 決定怎麼讓客人喜歡並買單。</p>
         </section>
 
-        <section class="slide">
+        <section class="slide" id="quiz-start">
             <h1>📝 第一章 綜合實戰測驗</h1>
-            <p style="font-size: 1.8em; text-align: center; color: #abb2bf;">10 題情境題，檢驗你的企業管理大局觀！<br><span style="font-size: 0.7em;">(V3.1 閉環系統：即時糾正 ➡️ 記憶跳轉 ➡️ 一鍵返回)</span></p>
+            <p style="font-size: 1.8em; text-align: center; color: #abb2bf;">10 題情境題，檢驗你的企業管理大局觀！<br><span style="font-size: 0.7em;">(V3.2 終極系統：支援捷徑直達與動態跳轉)</span></p>
         </section>
-
+        
         <section class="slide quiz-slide">
             <h2>Q1. 部門機能判定</h2>
             <p class="question">Q1: 特斯拉 (Tesla) 在上海建立超級工廠，導入自動化機器手臂，大幅縮短了組裝時間。這屬於「產銷人發財」的哪一個領域？</p>
@@ -238,6 +239,15 @@
             if (currentSlideIndex < 0) { currentSlideIndex = 0; }
             if (currentSlideIndex >= totalSlides) { currentSlideIndex = totalSlides - 1; }
             updateDeckView();
+        }
+        
+        // 新增：尋找測驗起點並瞬間移動過去
+        function jumpToQuizStart() {
+            const quizStartSlide = document.getElementById('quiz-start');
+            if (quizStartSlide) {
+                currentSlideIndex = Array.from(slides).indexOf(quizStartSlide);
+                updateDeckView(); // 更新畫面
+            }
         }
 
         // 飛往解說頁 (並記住出發地)
