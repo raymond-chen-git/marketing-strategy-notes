@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行銷與商業模式學習講義 | 第2章</title>
+    <style>
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #2c3e50;
+            margin-bottom: 30px;
+        }
+        h1 { color: #2c3e50; font-size: 2.2em; margin-bottom: 10px; }
+        h2 { color: #34495e; border-left: 5px solid #3498db; padding-left: 15px; margin-top: 40px; }
+        h3 { color: #2980b9; }
+        p { font-size: 1.1em; margin-bottom: 20px; }
+        .highlight { background-color: #ffeaa7; padding: 2px 5px; border-radius: 3px; }
+        .box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .canvas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .canvas-item {
+            background-color: #f0f4f8;
+            padding: 15px;
+            border-left: 4px solid #2980b9;
+            border-radius: 4px;
+        }
+        /* 測驗區塊樣式 */
+        .quiz-container {
+            background-color: #e8f6f3;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #1abc9c;
+            margin-top: 40px;
+        }
+        .question { font-weight: bold; font-size: 1.2em; margin-bottom: 15px; }
+        .options { list-style-type: none; padding: 0; }
+        .options li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            transition: 0.3s;
+        }
+        .options li:hover { background-color: #d1f2eb; border-color: #1abc9c; }
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .correct { background-color: #d5f5e3; color: #27ae60; border: 1px solid #27ae60; }
+        .wrong { background-color: #fadbd8; color: #c0392b; border: 1px solid #c0392b; }
+        nav { margin-bottom: 20px; text-align: right; }
+        nav a { text-decoration: none; color: #3498db; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">🔙 回到第 1 章</a>
+    </nav>
+
+    <header>
+        <h1>行銷與商業模式：從零到一</h1>
+        <p>第 2 章：拆解賺錢引擎（商業模式畫布 BMC）</p>
+    </header>
+
+    <main>
+        <div class="box">
+            <h2>1. BMC 的核心邏輯：九宮格與左右腦</h2>
+            <p>商業模式畫布 (Business Model Canvas) 由 9 個區塊組成。你可以把它想像成一個天平，中間是你的「產品價值」，右邊是「市場（賺錢）」，左邊是「營運（花錢）」。</p>
+            <p><strong>👑 核心靈魂：</strong><br>
+            <span class="highlight">價值主張 (Value Propositions)：</span> 你替客人解決了什麼問題？你提供什麼獨特價值？這是整盤生意的起點。</p>
+        </div>
+
+        <div class="box">
+            <h2>2. 畫布右半部：前端市場（創造價值與營收）</h2>
+            <p>右半部關注的是「外部市場」，也就是你如何找到客人並讓他們掏錢。</p>
+            <div class="canvas-grid">
+                <div class="canvas-item"><strong>目標客群 (Customer Segments)：</strong><br>誰是你的客人？是所有人，還是特定的利基市場（Niche Market）？</div>
+                <div class="canvas-item"><strong>通路 (Channels)：</strong><br>客人怎麼買到你的東西？（實體店面、電商網站、APP？）</div>
+                <div class="canvas-item"><strong>顧客關係 (Customer Relationships)：</strong><br>你跟客人是什麼關係？是一次性交易，還是長期訂閱制的會員？</div>
+                <div class="canvas-item"><strong>收益流 (Revenue Streams)：</strong><br>錢怎麼進來？是賣斷產品、收手續費、還是收月費？</div>
+            </div>
+        </div>
+
+        <div class="box">
+            <h2>3. 畫布左半部：後端基礎（支撐營運與成本）</h2>
+            <p>左半部關注的是「內部營運」，為了實現右邊的承諾，你必須在後台做哪些準備、花哪些錢。</p>
+            <div class="canvas-grid">
+                <div class="canvas-item"><strong>關鍵資源 (Key Resources)：</strong><br>你必須擁有什麼資產？（專利技術、強大品牌、優秀工程師？）</div>
+                <div class="canvas-item"><strong>關鍵活動 (Key Activities)：</strong><br>你每天必須做好什麼事？（軟體開發、供應鏈管理、內容創作？）</div>
+                <div class="canvas-item"><strong>關鍵合作夥伴 (Key Partnerships)：</strong><br>誰能幫你？（上游供應商、物流公司、金流平台？）</div>
+                <div class="canvas-item"><strong>成本結構 (Cost Structure)：</strong><br>錢花去哪了？（伺服器費用、員工薪水、行銷廣告費？）</div>
+            </div>
+        </div>
+
+        <div class="quiz-container">
+            <h3>📝 第二章：隨堂知識測驗</h3>
+            <p class="question">情境題：假設你正在分析「Netflix」的商業模式。他們花費了數十億美元購買電影版權，並自己拍攝原創影集（如《怪奇物語》）。請問，這些「影視版權」與「拍攝原創內容的行為」，在 BMC 畫布中分別屬於哪兩個區塊？</p>
+            <ul class="options">
+                <li onclick="checkAnswer(this, 'wrong', '分析有誤。通路是指將服務傳遞給客人的管道（如 Netflix APP），顧客關係是指如何維繫用戶。版權與拍攝內容屬於內部的後勤基礎。')">A. 通路 (Channels) 與 顧客關係 (Customer Relationships)</li>
+                <li onclick="checkAnswer(this, 'correct', '精準命中！「影視版權」是 Netflix 不可或缺的【關鍵資源】；而「拍攝原創內容」則是他們為了維持競爭力必須執行的【關鍵活動】。')">B. 關鍵資源 (Key Resources) 與 關鍵活動 (Key Activities)</li>
+                <li onclick="checkAnswer(this, 'wrong', '邏輯不對。價值主張是「隨選隨看的娛樂體驗」，收益流則是「每月的訂閱費」。版權與拍攝是支撐這個主張背後的成本與行動。')">C. 價值主張 (Value Propositions) 與 收益流 (Revenue Streams)</li>
+            </ul>
+            <div id="feedback-msg" class="feedback"></div>
+        </div>
+    </main>
+
+    <script>
+        function checkAnswer(element, status, message) {
+            let options = document.querySelectorAll('.options li');
+            options.forEach(opt => {
+                opt.style.backgroundColor = '#fff';
+                opt.style.borderColor = '#ccc';
+            });
+
+            let feedbackDiv = document.getElementById('feedback-msg');
+            feedbackDiv.style.display = 'block';
+            feedbackDiv.innerText = message;
+
+            if (status === 'correct') {
+                element.style.backgroundColor = '#d5f5e3';
+                element.style.borderColor = '#27ae60';
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                element.style.backgroundColor = '#fadbd8';
+                element.style.borderColor = '#c0392b';
+                feedbackDiv.className = 'feedback wrong';
+            }
+        }
+    </script>
+</body>
+</html>
